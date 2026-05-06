@@ -39,12 +39,12 @@
 </head>
 <body class="min-h-screen overflow-hidden bg-slate-50">
 
-    <!-- 1. 入口 -->
+    <!-- 1. 入口身分選擇 -->
     <div id="entry-screen" class="full-screen-panel bg-slate-900 flex flex-col items-center justify-center p-6 z-[100]">
         <div class="text-center space-y-10 w-full max-w-4xl">
             <h1 class="text-6xl font-black text-white italic uppercase tracking-widest">領地爭奪 <span class="text-indigo-500">Battle</span></h1>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 px-4">
-                <button onclick="switchRole('teacher')" class="group bg-white/5 border-2 border-white/10 p-10 rounded-[3rem] hover:bg-white hover:border-indigo-500 transition-all flex flex-col items-center gap-4 shadow-xl">
+                <button onclick="switchRole('teacher')" class="group bg-white/5 border-2 border-white/10 p-10 rounded-[2.5rem] hover:bg-white hover:border-indigo-500 transition-all flex flex-col items-center gap-4 shadow-xl">
                     <i data-lucide="graduation-cap" class="w-16 h-16 text-indigo-500 group-hover:scale-110 transition-transform"></i>
                     <div class="text-2xl font-black text-white group-hover:text-slate-900">我是教師</div>
                 </button>
@@ -60,8 +60,8 @@
     <div id="teacher-setup-screen" class="hidden full-screen-panel bg-white text-slate-900 flex flex-col">
         <header class="p-4 border-b-2 border-slate-200 flex justify-between items-center shadow-sm bg-white z-20">
             <h2 class="text-2xl font-black italic">司令部 <span class="text-indigo-600 uppercase">Lobby</span></h2>
-            <div id="join-stats-header" class="bg-indigo-600 text-white px-4 py-1 rounded-full text-xs font-black italic uppercase tracking-widest">報到: 0 人</div>
-            <button onclick="location.reload()" class="text-slate-400 hover:text-rose-500 transition-all"><i data-lucide="x-circle" class="w-8 h-8"></i></button>
+            <div id="join-stats-header" class="bg-indigo-600 text-white px-4 py-1 rounded-full text-xs font-black">已報到：0 人</div>
+            <button onclick="location.reload()" class="text-slate-400 hover:text-rose-500"><i data-lucide="x-circle" class="w-8 h-8"></i></button>
         </header>
         <div class="flex-1 flex overflow-hidden">
             <div class="w-[320px] bg-slate-50 border-r p-6 space-y-6 overflow-y-auto">
@@ -78,25 +78,28 @@
                         <option value="sync">全班同步 (由教師同步)</option>
                         <option value="self">自主作答 (學生個別進度)</option>
                     </select>
-                    <label class="block text-xs font-black uppercase text-slate-400 italic">結束條件設定</label>
+                    <label class="block text-xs font-black uppercase text-slate-400 italic">完賽結束設定</label>
                     <select id="t-game-mode" onchange="toggleTargetNum()" class="w-full p-3 rounded-xl border-2 font-black text-slate-900">
                         <option value="time">指定挑戰時間 (分鐘)</option>
                         <option value="complete_all">答完全部題庫</option>
                         <option value="target_count" selected>指定達成總題數</option>
                     </select>
-                    <input type="number" id="t-target-num" value="5" class="w-full p-3 rounded-xl border-2 font-black text-slate-900">
+                    <div id="target-count-box">
+                        <label id="target-label" class="block text-[10px] font-black uppercase text-slate-400">目標設定 (題數/分鐘)</label>
+                        <input type="number" id="t-target-num" value="5" class="w-full p-3 rounded-xl border-2 font-black text-slate-900">
+                    </div>
                 </div>
             </div>
             <div class="flex-1 p-8 flex flex-col overflow-hidden text-slate-900">
                 <div class="flex justify-between items-center mb-6">
-                    <h3 class="text-xl font-black italic"><i data-lucide="scroll-text" class="inline w-6 h-6 mr-2 text-indigo-600"></i>任務題庫配置區</h3>
+                    <h3 class="text-xl font-black italic"><i data-lucide="scroll-text" class="inline w-6 h-6 mr-2 text-indigo-600"></i>任務配置清單</h3>
                     <div class="flex gap-2">
                         <button onclick="addQuestionRow('hand')" class="bg-indigo-600 text-white px-4 py-1.5 rounded-lg font-black text-xs shadow-md">+ 手寫</button>
                         <button onclick="addQuestionRow('choice')" class="bg-emerald-600 text-white px-4 py-1.5 rounded-lg font-black text-xs shadow-md">+ 選擇</button>
                         <button onclick="addQuestionRow('boolean')" class="bg-amber-500 text-white px-4 py-1.5 rounded-lg font-black text-xs shadow-md">+ 是非</button>
                     </div>
                 </div>
-                <div id="question-list" class="flex-1 space-y-3 overflow-y-auto pr-4 custom-scrollbar"></div>
+                <div id="question-list" class="flex-1 space-y-3 overflow-y-auto pr-4 custom-scrollbar text-slate-900"></div>
             </div>
             <div class="w-[280px] bg-slate-100 border-l p-6 overflow-y-auto">
                 <h3 class="font-black text-xs uppercase text-slate-400 mb-4 flex justify-between">已就緒勇者 <span id="ready-count" class="text-indigo-600 font-black">0</span></h3>
@@ -104,36 +107,36 @@
             </div>
         </div>
         <div class="p-6 border-t-2 bg-white">
-            <button onclick="handleTeacherInit()" id="start-battle-btn" class="w-full bg-slate-900 text-white font-black py-5 rounded-2xl text-2xl uppercase italic tracking-widest shadow-xl disabled:opacity-20 transition-all" disabled>Initiate Battle</button>
+            <button onclick="handleTeacherInit()" id="start-battle-btn" class="w-full bg-slate-900 text-white font-black py-4 rounded-xl text-xl shadow-xl disabled:opacity-20 uppercase italic transition-all" disabled>Initiate Battle</button>
         </div>
     </div>
 
-    <!-- 3. 學生登錄：代號 + 左右手 -->
+    <!-- 3. 學生登錄：名稱 + 左右手 -->
     <div id="player-select-screen" class="hidden full-screen-panel bg-slate-900 flex flex-col items-center justify-center p-6 z-[65]">
         <div class="max-w-md w-full bg-white p-10 rounded-[4rem] shadow-2xl text-center space-y-8 relative border-[12px] border-slate-800">
             <h2 class="text-4xl font-black italic uppercase">戰士報到</h2>
-            <input type="text" id="user-name-input" maxlength="10" placeholder="您的戰鬥代號..." class="w-full border-b-4 border-slate-100 p-4 text-center text-3xl font-black outline-none focus:border-indigo-600 text-slate-900">
+            <input type="text" id="user-name-input" maxlength="10" placeholder="您的戰鬥代號..." class="w-full border-b-2 border-slate-100 p-4 text-center text-3xl font-black outline-none focus:border-indigo-600 text-slate-900">
             <div class="grid grid-cols-2 gap-4">
                 <button onclick="chooseHand('left')" id="hand-left-btn" class="p-6 border-4 border-slate-100 rounded-3xl flex flex-col items-center gap-2 hover:border-indigo-500 transition-all">
                     <i data-lucide="hand" class="w-12 h-12 -scale-x-100"></i>
                     <span class="font-black">左撇子</span>
                 </button>
-                <button onclick="chooseHand('right')" id="hand-right-btn" class="p-6 border-4 border-indigo-500 rounded-3xl flex flex-col items-center gap-2 transition-all text-indigo-600">
+                <button onclick="chooseHand('right')" id="hand-right-btn" class="p-6 border-4 border-indigo-500 rounded-3xl flex flex-col items-center gap-2 transition-all">
                     <i data-lucide="hand" class="w-12 h-12"></i>
                     <span class="font-black">右撇子</span>
                 </button>
             </div>
             <button id="student-confirm-btn" onclick="confirmStudentName()" class="w-full bg-slate-900 text-white py-5 rounded-2xl font-black text-xl shadow-xl">確認部署</button>
-            <div id="student-status-hint" class="hidden py-4 text-indigo-600 font-black animate-pulse text-xl">已連線至司令部，待命開戰...</div>
+            <div id="student-status-hint" class="hidden py-4 text-indigo-600 font-black animate-pulse text-xl">已向司令部報到...</div>
         </div>
     </div>
 
-    <!-- 4. 正式戰場介面 (3/4 & 1/4 佈局) -->
+    <!-- 4. 正式戰場 (3/4 佈局) -->
     <div id="game-screen" class="hidden full-screen-panel bg-slate-100 flex overflow-hidden text-slate-900">
         
-        <!-- 資訊側欄 (1/4) -->
-        <div id="sidebar-info" class="w-1/4 bg-white border-r-2 border-slate-200 p-6 flex flex-col gap-6 shadow-xl z-20 overflow-y-auto custom-scrollbar text-slate-900">
-            <div id="student-info-panel" class="bg-slate-900 p-5 rounded-[2rem] text-white shadow-md border-2 border-white/5">
+        <!-- 側邊欄 (1/4) -->
+        <div id="sidebar-info" class="w-1/4 bg-white border-r-2 border-slate-200 p-6 flex flex-col gap-6 shadow-xl z-20 overflow-y-auto custom-scrollbar">
+            <div id="student-info-panel" class="bg-slate-900 p-5 rounded-[2rem] text-white shadow-md">
                 <div class="flex items-center gap-4">
                     <div id="my-color-preview" class="w-14 h-14 rounded-full border-4 border-white/10 shadow-inner"></div>
                     <div class="flex-1">
@@ -143,63 +146,63 @@
                 </div>
             </div>
 
-            <!-- 教師指揮中心 (僅教師) -->
+            <!-- 老師指揮中心 (僅老師) -->
             <div id="teacher-hud" class="hidden bg-indigo-900 p-5 rounded-[2.5rem] text-white space-y-4 shadow-2xl">
                 <div class="flex justify-between items-center">
-                    <h3 class="text-[10px] font-black uppercase tracking-widest flex items-center gap-1"><i data-lucide="command" class="w-3 h-3 text-indigo-400"></i> 指揮中心</h3>
+                    <h3 class="text-[10px] font-black uppercase tracking-widest flex items-center gap-1"><i data-lucide="command" class="w-3 h-3 text-indigo-400"></i> 指揮面板</h3>
                     <span id="t-total-q-info" class="text-[10px] bg-white/20 px-2 py-0.5 rounded font-bold italic">題庫載入中</span>
                 </div>
                 <div class="bg-white/10 p-4 rounded-2xl border border-white/10 space-y-4">
                     <div class="flex justify-between items-center">
-                        <span id="t-q-idx-label" class="text-[10px] opacity-60 font-black uppercase italic">題目預覽 #01</span>
+                        <span id="t-q-idx-label" class="text-[10px] opacity-60 font-black uppercase">題目預覽 #01</span>
                         <div class="flex gap-1">
                             <button onclick="navigateQuestion(-1)" class="p-1 hover:bg-white/20 rounded-lg transition-all"><i data-lucide="chevron-left" class="w-4 h-4"></i></button>
                             <button onclick="navigateQuestion(1)" class="p-1 hover:bg-white/20 rounded-lg transition-all"><i data-lucide="chevron-right" class="w-4 h-4"></i></button>
                         </div>
                     </div>
-                    <div id="t-q-preview-text" class="text-sm font-black italic text-indigo-100 min-h-[50px] leading-tight uppercase">任務內容...</div>
+                    <div id="t-q-preview-text" class="text-sm font-black italic text-indigo-100 min-h-[50px] leading-tight uppercase">內容載入中...</div>
                     <button id="sync-btn" onclick="pushSyncQuestion()" class="w-full bg-indigo-500 py-3 rounded-xl text-[10px] font-black uppercase italic shadow-md hover:bg-indigo-400 transition-all flex items-center justify-center gap-2">
                         <i data-lucide="refresh-cw" class="w-3 h-3"></i> 同步此題至全體
                     </button>
                 </div>
                 <div class="bg-white/10 p-4 rounded-2xl text-center">
-                    <div id="t-avg-progress-text" class="text-xl font-black italic text-indigo-300 uppercase tracking-tighter text-indigo-300">AVG: 0%</div>
-                    <div id="t-timer-display" class="text-xl font-black text-rose-400 mt-2 hidden italic">10:00</div>
+                    <div id="t-avg-progress-text" class="text-xl font-black italic text-indigo-300 uppercase tracking-tighter">AVG: 0%</div>
+                    <div id="t-timer-display" class="text-2xl font-black text-rose-400 mt-2 hidden italic">10:00</div>
                 </div>
             </div>
 
             <!-- 地盤縮圖 -->
             <div class="flex-1 bg-slate-50 rounded-[2.5rem] p-6 flex flex-col items-center justify-center border-2 border-white shadow-inner relative overflow-hidden">
-                <h4 class="absolute top-4 w-full text-center text-[10px] font-black text-slate-300 uppercase tracking-widest italic">戰區概況圖</h4>
+                <h4 class="absolute top-4 w-full text-center text-[10px] font-black text-slate-300 uppercase tracking-widest italic">戰區縮圖</h4>
                 <div class="w-full max-w-[180px]">
                     <svg id="board-svg-mini" viewBox="0 0 550 550" class="w-full h-auto drop-shadow-lg"></svg>
                 </div>
             </div>
 
-            <!-- 教師審核 (僅教師) -->
-            <div id="teacher-grading-panel" class="hidden bg-white p-5 rounded-[2.5rem] border-4 border-orange-400 shadow-2xl text-slate-900">
-                <h2 class="text-xs font-black mb-4 italic uppercase flex items-center gap-2"><i data-lucide="target" class="w-4 h-4 text-orange-500"></i> 戰果審查</h2>
-                <div id="grading-queue-empty" class="text-center py-6 text-slate-200 font-black italic text-xs uppercase italic tracking-tighter">Awaiting Intel...</div>
+            <!-- 教師審核 (僅老師) -->
+            <div id="teacher-grading-panel" class="hidden bg-white p-5 rounded-[2.5rem] border-4 border-orange-400 shadow-lg text-slate-900">
+                <h2 class="text-xs font-black mb-4 italic uppercase flex items-center gap-2 text-slate-900"><i data-lucide="target" class="w-4 h-4 text-orange-500"></i> 審查中心</h2>
+                <div id="grading-queue-empty" class="text-center py-6 text-slate-200 font-black italic text-xs uppercase">Awaiting Intel...</div>
                 <div id="grading-area" class="hidden space-y-4">
-                    <div id="grading-content-box" class="bg-slate-50 rounded-2xl min-h-[140px] flex items-center justify-center shadow-inner border overflow-hidden text-2xl font-black italic uppercase"></div>
-                    <div class="grid grid-cols-2 gap-2 text-slate-900">
-                        <button onclick="setPreGrade(true)" class="bg-emerald-600 text-white p-4 rounded-xl font-black text-3xl shadow-lg hover:bg-emerald-700 active:scale-90 transition-all text-white">○</button>
-                        <button onclick="setPreGrade(false)" class="bg-rose-600 text-white p-4 rounded-xl font-black text-3xl shadow-lg hover:bg-rose-700 active:scale-90 transition-all text-white">×</button>
+                    <div id="grading-content-box" class="bg-slate-50 rounded-xl min-h-[120px] flex items-center justify-center shadow-inner border overflow-hidden text-2xl font-black italic uppercase text-slate-900"></div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button onclick="setPreGrade(true)" class="bg-emerald-600 text-white p-3 rounded-lg font-black text-3xl shadow-lg hover:bg-emerald-700 active:scale-90 transition-all">○</button>
+                        <button onclick="setPreGrade(false)" class="bg-rose-600 text-white p-3 rounded-lg font-black text-3xl shadow-lg hover:bg-rose-700 active:scale-90 transition-all">×</button>
                     </div>
-                    <button onclick="finalSubmitGrade()" id="confirm-grade-btn" class="hidden w-full bg-slate-900 text-white py-4 rounded-xl text-xs font-black uppercase italic shadow-2xl">AUTHORIZE INTEL</button>
+                    <button onclick="finalSubmitGrade()" id="confirm-grade-btn" class="hidden w-full bg-slate-900 text-white py-4 rounded-xl text-xs font-black uppercase italic shadow-2xl">AUTHORIZE</button>
                 </div>
             </div>
 
             <!-- 全域戰報 (學生端隱藏) -->
-            <div id="battle-summary-container" class="bg-white p-6 rounded-[2.5rem] flex-1 shadow-inner border border-slate-100 overflow-y-auto custom-scrollbar">
+            <div id="battle-summary-container" class="bg-white p-5 rounded-[2rem] flex-1 shadow-inner border border-slate-100 overflow-y-auto custom-scrollbar">
                 <h3 class="font-black text-[10px] text-slate-400 mb-4 flex items-center gap-2 uppercase tracking-widest italic text-slate-900"><i data-lucide="activity" class="w-3 h-3 text-indigo-500"></i> Battle Summary</h3>
-                <div id="player-list" class="space-y-2 text-slate-900"></div>
+                <div id="player-list" class="space-y-2.5"></div>
             </div>
         </div>
 
         <!-- 主作答區 (3/4) -->
-        <div id="main-canvas-area" class="flex-1 flex flex-col bg-slate-100 relative overflow-hidden text-slate-900">
-            <div id="pause-overlay" class="hidden absolute inset-0 bg-slate-900/80 z-[60] flex items-center justify-center text-white text-5xl font-black italic uppercase animate-pulse">Battle On Hold</div>
+        <div id="main-canvas-area" class="flex-1 flex flex-col bg-slate-100 relative overflow-hidden">
+            <div id="pause-overlay" class="hidden absolute inset-0 bg-slate-900/70 z-[60] flex items-center justify-center text-white text-5xl font-black italic uppercase animate-pulse">Battle On Hold</div>
 
             <div class="p-10 h-full flex flex-col">
                 <div class="mb-6 flex justify-between items-center text-slate-900 font-black">
@@ -212,30 +215,29 @@
                 </div>
                 
                 <div class="flex-1 flex items-center justify-center relative">
-                    <!-- 手寫板介面 -->
-                    <div id="handwriting-area" class="hidden w-full h-full flex gap-12 items-center justify-center">
+                    <!-- 手寫板區 -->
+                    <div id="handwriting-area" class="hidden w-full h-full flex gap-10 items-center justify-center">
                         <div id="canvas-container" class="tian-zi-ge w-[500px] h-[500px] border-[18px] border-white rounded-[4.5rem] shadow-2xl relative overflow-hidden ring-[12px] ring-slate-200/50">
-                            <div id="writing-guide" class="writing-bg-text absolute inset-0 flex items-center justify-center text-[300px] text-slate-900/5"></div>
+                            <div id="writing-guide" class="writing-bg-text absolute inset-0 flex items-center justify-center text-[300px] text-slate-900/5 font-black"></div>
                             <canvas id="writing-canvas" width="500" height="500" class="absolute top-0 left-0 cursor-crosshair z-10 touch-none"></canvas>
                         </div>
                         <div id="canvas-tools" class="flex flex-col gap-4 w-48">
-                            <button onclick="setTool('pen')" id="tool-pen" class="w-full bg-indigo-600 text-white py-5 rounded-3xl shadow-lg border-4 border-indigo-300 flex flex-col items-center gap-1 font-black transition-all"><i data-lucide="pen-tool" class="w-6 h-6"></i>黑筆</button>
-                            <button onclick="setTool('eraser')" id="tool-eraser" class="w-full bg-slate-200 text-slate-500 py-5 rounded-3xl flex flex-col items-center gap-1 font-black transition-all hover:bg-slate-300"><i data-lucide="eraser" class="w-6 h-6"></i>橡皮擦</button>
-                            <button onclick="undoAction()" class="w-full bg-slate-200 text-slate-500 py-5 rounded-3xl flex flex-col items-center gap-1 font-black transition-all hover:bg-slate-300"><i data-lucide="undo-2" class="w-6 h-6"></i>返回上步</button>
-                            <button onclick="clearCanvas()" class="w-full bg-slate-200 text-slate-500 py-5 rounded-3xl flex flex-col items-center gap-1 font-black transition-all hover:bg-slate-300"><i data-lucide="trash-2" class="w-6 h-6"></i>清除</button>
+                            <button onclick="setTool('pen')" id="tool-pen" class="w-full bg-indigo-600 text-white py-5 rounded-3xl shadow-lg border-4 border-indigo-300 flex flex-col items-center gap-1 font-black transition-all"><i data-lucide="pen-tool"></i>黑筆</button>
+                            <button onclick="setTool('eraser')" id="tool-eraser" class="w-full bg-slate-200 text-slate-500 py-5 rounded-3xl flex flex-col items-center gap-1 font-black transition-all hover:bg-slate-300"><i data-lucide="eraser"></i>橡皮擦</button>
+                            <button onclick="undoAction()" class="w-full bg-slate-200 text-slate-500 py-5 rounded-3xl flex flex-col items-center gap-1 font-black transition-all hover:bg-slate-300"><i data-lucide="undo-2"></i>回上步</button>
+                            <button onclick="clearCanvas()" class="w-full bg-slate-200 text-slate-500 py-5 rounded-3xl flex flex-col items-center gap-1 font-black transition-all hover:bg-slate-300"><i data-lucide="trash-2"></i>清空</button>
                             <div class="h-10"></div>
-                            <button onclick="submitHandwriting()" class="w-full bg-emerald-600 text-white py-8 rounded-[2.5rem] text-4xl font-black shadow-2xl hover:bg-emerald-700 active:scale-95 transition-all italic tracking-widest">TRANSMIT</button>
+                            <button onclick="submitHandwriting()" class="w-full bg-emerald-600 text-white py-8 rounded-[2.5rem] text-4xl font-black shadow-xl hover:bg-emerald-700 active:scale-95 transition-all italic tracking-widest">TRANSMIT</button>
                         </div>
                     </div>
 
-                    <!-- 選擇/是非介面 -->
+                    <!-- 選擇/是非區 -->
                     <div id="choice-area" class="hidden w-full max-w-4xl flex flex-col gap-8">
                         <div id="options-container" class="grid grid-cols-1 gap-6"></div>
-                        <button id="multi-submit-btn" onclick="submitMultiAnswer()" class="hidden w-full bg-indigo-600 text-white py-10 rounded-[3.5rem] text-5xl font-black shadow-2xl italic uppercase tracking-tighter transition-all hover:bg-indigo-700">Authenticate Intel</button>
+                        <button id="multi-submit-btn" onclick="submitMultiAnswer()" class="hidden w-full bg-indigo-600 text-white py-10 rounded-[3.5rem] text-5xl font-black shadow-2xl italic uppercase tracking-tighter transition-all hover:bg-indigo-700">Confirm Authenticate</button>
                     </div>
 
-                    <!-- 傳輸中遮罩 -->
-                    <div id="wait-overlay" class="hidden absolute inset-0 bg-white/95 backdrop-blur-xl z-40 flex flex-col items-center justify-center animate-in fade-in duration-300">
+                    <div id="wait-overlay" class="hidden absolute inset-0 bg-white/95 backdrop-blur-xl z-40 flex flex-col items-center justify-center animate-in fade-in">
                         <i data-lucide="radio" class="w-24 h-24 text-indigo-600 animate-bounce mb-8"></i>
                         <h4 class="text-5xl font-black italic uppercase text-slate-900 tracking-tighter">Transmitting Data...</h4>
                         <p class="text-slate-400 font-bold text-2xl mt-4">司令部審核中，請待命</p>
@@ -246,11 +248,9 @@
     </div>
 
     <!-- 5. 全螢幕領地奪取 (Modal) -->
-    <div id="attack-modal" class="hidden fixed inset-0 bg-slate-900/90 backdrop-blur-xl z-[150] flex flex-col items-center justify-center p-10 animate-in zoom-in duration-500">
-        <h2 class="text-6xl font-black text-white italic uppercase mb-12 text-center leading-tight tracking-tighter">
-            <i data-lucide="target" class="w-16 h-16 text-orange-500 inline-block mr-4"></i> MISSION SUCCESS!<br>CAPTURE THE TERRITORY!
-        </h2>
-        <div class="w-full max-w-[700px] relative">
+    <div id="attack-modal" class="hidden fixed inset-0 bg-slate-900/95 backdrop-blur-xl z-[150] flex flex-col items-center justify-center p-10 animate-in zoom-in duration-500">
+        <h2 class="text-6xl font-black text-white italic uppercase mb-12 text-center leading-tight tracking-tighter">MISSION SUCCESS!<br>CAPTURE THE TERRITORY!</h2>
+        <div class="w-full max-w-[750px] relative">
             <svg id="board-svg-main" viewBox="0 0 550 550" class="w-full h-auto drop-shadow-[0_20px_80px_rgba(255,255,255,0.25)]"></svg>
         </div>
         <p class="mt-12 text-slate-400 font-black italic text-2xl tracking-widest">請點擊相鄰的圓圈以擴張領土</p>
@@ -261,19 +261,20 @@
         <h2 class="text-6xl font-black text-white italic uppercase mb-20 tracking-tighter">Battle Accomplished</h2>
         <div class="flex items-end gap-10 max-w-5xl w-full justify-center text-slate-900">
             <div class="flex flex-col items-center gap-8 text-slate-400"><div id="rank-2-name" class="text-3xl font-black italic uppercase truncate w-40 text-center">--</div><div class="podium-2 w-56 rounded-t-[4rem] flex items-center justify-center text-8xl font-black text-white shadow-2xl">2</div></div>
-            <div class="flex flex-col items-center gap-10 text-yellow-400"><div id="rank-1-name" class="text-6xl font-black italic uppercase truncate w-60 text-center drop-shadow-[0_0_30px_rgba(250,204,21,0.6)]">--</div><div class="podium-1 w-64 rounded-t-[5rem] flex items-center justify-center text-9xl font-black text-white shadow-[0_-20px_70px_rgba(234,179,8,0.5)]">1</div></div>
+            <div class="flex flex-col items-center gap-10 text-yellow-400"><div id="rank-1-name" class="text-6xl font-black italic uppercase truncate w-60 text-center">--</div><div class="podium-1 w-64 rounded-t-[5rem] flex items-center justify-center text-9xl font-black text-white shadow-2xl">1</div></div>
             <div class="flex flex-col items-center gap-8 text-amber-600"><div id="rank-3-name" class="text-2xl font-black italic uppercase truncate w-40 text-center">--</div><div class="podium-3 w-48 rounded-t-[3rem] flex items-center justify-center text-5xl font-black text-white shadow-2xl">3</div></div>
         </div>
-        <button onclick="location.reload()" class="mt-28 bg-white text-slate-900 px-20 py-6 rounded-full font-black text-3xl shadow-2xl hover:bg-slate-200 transition-all uppercase italic">Return to Headquarters</button>
+        <button onclick="location.reload()" class="mt-28 bg-white text-slate-900 px-20 py-6 rounded-full font-black text-3xl shadow-2xl hover:bg-slate-200">Return to Base</button>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/qrcode@1.4.4/build/qrcode.min.js"></script>
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, setDoc, onSnapshot, updateDoc, arrayUnion, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getFirestore, doc, setDoc, onSnapshot, updateDoc, arrayUnion } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        const STABLE_APP_ID = 'territory-battle-final-stable-v501';
+        // 全新穩定頻道
+        const STABLE_APP_ID = 'territory-war-stable-v600-final';
         const firebaseConfig = { apiKey: "AIzaSyBBIi6sw-wUzp-Jxc3dXJhl5DZ3-6LMe-o", authDomain: "my-handwriting-tool.firebaseapp.com", projectId: "my-handwriting-tool", storageBucket: "my-handwriting-tool.firebasestorage.app", messagingSenderId: "649810632937", appId: "1:649810632937:web:085f7e5c8f5290d6da9078", measurementId: "G-12B4P0QCGH" };
 
         Object.assign(window, { switchRole, chooseHand, setTool, undoAction, addQuestionRow, handleTeacherInit, confirmStudentName, setPreGrade, finalSubmitGrade, submitMultiAnswer, submitHandwriting, clearCanvas, copyJoinLink, toggleTargetNum, toggleOption, navigateQuestion, pushSyncQuestion });
@@ -317,13 +318,13 @@
 
         function toggleTargetNum() {
             const mode = document.getElementById('t-game-mode').value;
-            // 控制目標題數輸入框的 UI
+            // 控制目標題數輸入框
         }
 
         function chooseHand(h) {
             handPref = h;
-            document.getElementById('hand-left-btn').className = h === 'left' ? 'p-6 border-4 border-indigo-500 rounded-3xl flex flex-col items-center gap-2' : 'p-6 border-4 border-slate-100 rounded-3xl flex flex-col items-center gap-2 opacity-40';
-            document.getElementById('hand-right-btn').className = h === 'right' ? 'p-6 border-4 border-indigo-500 rounded-3xl flex flex-col items-center gap-2' : 'p-6 border-4 border-slate-100 rounded-3xl flex flex-col items-center gap-2 opacity-40';
+            document.getElementById('hand-left-btn').className = h === 'left' ? 'p-6 border-4 border-indigo-500 rounded-3xl flex flex-col items-center gap-2' : 'p-6 border-4 border-slate-100 rounded-3xl flex flex-col items-center gap-2 opacity-30';
+            document.getElementById('hand-right-btn').className = h === 'right' ? 'p-6 border-4 border-indigo-500 rounded-3xl flex flex-col items-center gap-2' : 'p-6 border-4 border-slate-100 rounded-3xl flex flex-col items-center gap-2 opacity-30';
             const container = document.getElementById('main-canvas-area'), sidebar = document.getElementById('sidebar-info');
             if(h === 'left') { container.parentNode.insertBefore(sidebar, container.nextSibling); document.getElementById('handwriting-area').classList.add('flex-row-reverse'); } 
             else { container.parentNode.insertBefore(sidebar, container); document.getElementById('handwriting-area').classList.remove('flex-row-reverse'); }
@@ -381,7 +382,7 @@
                     document.getElementById('teacher-hud').classList.remove('hidden'); document.getElementById('teacher-grading-panel').classList.remove('hidden'); document.getElementById('battle-summary-container').classList.remove('hidden');
                     document.getElementById('t-total-q-info').innerText = `${data.questions?.length || 0} 題`;
                     const max = data.config.mode === 'target_count' ? data.config.target : data.questions?.length || 1, avg = (data.players.reduce((a,b)=>a+b.score, 0) / (data.players.length || 1)), pct = Math.min(100, Math.round((avg / max) * 100));
-                    document.getElementById('t-avg-progress-text').innerText = `AVG: ${pct}%`; document.getElementById('t-progress-bar').style.width = pct + '%';
+                    document.getElementById('t-avg-progress-text').innerText = `AVG: ${pct}%`;
                     if(data.config.mode === 'time') {
                         document.getElementById('t-timer-display').classList.remove('hidden');
                         const rem = Math.max(0, (data.config.target * 60) - Math.floor((Date.now() - data.startTime)/1000));
