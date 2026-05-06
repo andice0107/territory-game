@@ -10,11 +10,9 @@
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&display=swap');
         body { font-family: 'Noto Sans TC', sans-serif; background-color: #f8fafc; color: #1e293b; margin: 0; padding: 0; overflow: hidden; }
         
-        /* 領地樣式 */
         .territory-cell { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer; stroke: #fff; stroke-width: 2px; }
         .territory-cell:hover { filter: brightness(1.1); transform: scale(1.1); stroke-width: 3px; z-index: 10; }
         
-        /* 玩家色彩 */
         .p-1-bg { background-color: #ff4d6d; } .p-1-color { fill: #ff4d6d; }
         .p-2-bg { background-color: #3b82f6; } .p-2-color { fill: #3b82f6; }
         .p-3-bg { background-color: #10b981; } .p-3-color { fill: #10b981; }
@@ -31,17 +29,12 @@
             position: relative; background-color: #fff;
         }
         .writing-bg-text { font-family: "KaiTi", "標楷體", serif; color: rgba(0,0,0,0.06); pointer-events: none; user-select: none; }
-        
-        .pulse-attack { animation: pulse 2s infinite; }
-        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(249, 115, 22, 0.7); } 70% { box-shadow: 0 0 0 20px rgba(249, 115, 22, 0); } 100% { box-shadow: 0 0 0 0 rgba(249, 115, 22, 0); } }
-        
         .full-screen-panel { width: 100vw; height: 100vh; position: fixed; top: 0; left: 0; z-index: 50; }
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
         .podium-1 { height: 160px; background: linear-gradient(to top, #facc15, #eab308); }
         .podium-2 { height: 120px; background: linear-gradient(to top, #94a3b8, #64748b); }
         .podium-3 { height: 80px; background: linear-gradient(to top, #b45309, #78350f); }
-        
-        .custom-scrollbar::-webkit-scrollbar { width: 5px; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
     </style>
 </head>
 <body class="min-h-screen overflow-hidden bg-slate-50">
@@ -55,7 +48,7 @@
                     <i data-lucide="graduation-cap" class="w-16 h-16 text-indigo-500 group-hover:scale-110 transition-transform"></i>
                     <div class="text-2xl font-black text-white group-hover:text-slate-900">我是教師</div>
                 </button>
-                <button onclick="switchRole('student')" class="group bg-white/5 border-2 border-white/10 p-10 rounded-[3rem] hover:bg-white hover:border-emerald-500 transition-all flex flex-col items-center gap-4 shadow-xl">
+                <button onclick="switchRole('student')" class="group bg-white/5 border-2 border-white/10 p-10 rounded-[2.5rem] hover:bg-white hover:border-emerald-500 transition-all flex flex-col items-center gap-4 shadow-xl">
                     <i data-lucide="sword" class="w-16 h-16 text-emerald-500 group-hover:scale-110 transition-transform"></i>
                     <div class="text-2xl font-black text-white group-hover:text-slate-900">我是學生</div>
                 </button>
@@ -67,7 +60,7 @@
     <div id="teacher-setup-screen" class="hidden full-screen-panel bg-white text-slate-900 flex flex-col">
         <header class="p-4 border-b-2 border-slate-200 flex justify-between items-center shadow-sm bg-white z-20">
             <h2 class="text-2xl font-black italic">司令部 <span class="text-indigo-600 uppercase">Lobby</span></h2>
-            <div id="join-stats-header" class="bg-indigo-600 text-white px-5 py-1.5 rounded-full text-xs font-black italic uppercase tracking-widest">報到: 0 人</div>
+            <div id="join-stats-header" class="bg-indigo-600 text-white px-4 py-1 rounded-full text-xs font-black italic uppercase tracking-widest">報到: 0 人</div>
             <button onclick="location.reload()" class="text-slate-400 hover:text-rose-500 transition-all"><i data-lucide="x-circle" class="w-8 h-8"></i></button>
         </header>
         <div class="flex-1 flex overflow-hidden">
@@ -96,14 +89,14 @@
             </div>
             <div class="flex-1 p-8 flex flex-col overflow-hidden text-slate-900">
                 <div class="flex justify-between items-center mb-6">
-                    <h3 class="text-xl font-black italic"><i data-lucide="scroll-text" class="inline w-6 h-6 mr-2 text-indigo-600"></i>任務題庫配置</h3>
+                    <h3 class="text-xl font-black italic"><i data-lucide="scroll-text" class="inline w-6 h-6 mr-2 text-indigo-600"></i>任務題庫配置區</h3>
                     <div class="flex gap-2">
                         <button onclick="addQuestionRow('hand')" class="bg-indigo-600 text-white px-4 py-1.5 rounded-lg font-black text-xs shadow-md">+ 手寫</button>
                         <button onclick="addQuestionRow('choice')" class="bg-emerald-600 text-white px-4 py-1.5 rounded-lg font-black text-xs shadow-md">+ 選擇</button>
                         <button onclick="addQuestionRow('boolean')" class="bg-amber-500 text-white px-4 py-1.5 rounded-lg font-black text-xs shadow-md">+ 是非</button>
                     </div>
                 </div>
-                <div id="question-list" class="flex-1 space-y-3 overflow-y-auto pr-4 custom-scrollbar text-slate-900"></div>
+                <div id="question-list" class="flex-1 space-y-3 overflow-y-auto pr-4 custom-scrollbar"></div>
             </div>
             <div class="w-[280px] bg-slate-100 border-l p-6 overflow-y-auto">
                 <h3 class="font-black text-xs uppercase text-slate-400 mb-4 flex justify-between">已就緒勇者 <span id="ready-count" class="text-indigo-600 font-black">0</span></h3>
@@ -125,7 +118,7 @@
                     <i data-lucide="hand" class="w-12 h-12 -scale-x-100"></i>
                     <span class="font-black">左撇子</span>
                 </button>
-                <button onclick="chooseHand('right')" id="hand-right-btn" class="p-6 border-4 border-indigo-500 rounded-3xl flex flex-col items-center gap-2 transition-all">
+                <button onclick="chooseHand('right')" id="hand-right-btn" class="p-6 border-4 border-indigo-500 rounded-3xl flex flex-col items-center gap-2 transition-all text-indigo-600">
                     <i data-lucide="hand" class="w-12 h-12"></i>
                     <span class="font-black">右撇子</span>
                 </button>
@@ -135,10 +128,10 @@
         </div>
     </div>
 
-    <!-- 4. 正式戰場 (3/4 & 1/4 佈局) -->
+    <!-- 4. 正式戰場介面 (3/4 & 1/4 佈局) -->
     <div id="game-screen" class="hidden full-screen-panel bg-slate-100 flex overflow-hidden text-slate-900">
         
-        <!-- 側邊欄 (1/4) -->
+        <!-- 資訊側欄 (1/4) -->
         <div id="sidebar-info" class="w-1/4 bg-white border-r-2 border-slate-200 p-6 flex flex-col gap-6 shadow-xl z-20 overflow-y-auto custom-scrollbar text-slate-900">
             <div id="student-info-panel" class="bg-slate-900 p-5 rounded-[2rem] text-white shadow-md border-2 border-white/5">
                 <div class="flex items-center gap-4">
@@ -151,7 +144,7 @@
             </div>
 
             <!-- 教師指揮中心 (僅教師) -->
-            <div id="teacher-hud" class="hidden bg-indigo-900 p-6 rounded-[2.5rem] text-white space-y-4 shadow-2xl">
+            <div id="teacher-hud" class="hidden bg-indigo-900 p-5 rounded-[2.5rem] text-white space-y-4 shadow-2xl">
                 <div class="flex justify-between items-center">
                     <h3 class="text-[10px] font-black uppercase tracking-widest flex items-center gap-1"><i data-lucide="command" class="w-3 h-3 text-indigo-400"></i> 指揮中心</h3>
                     <span id="t-total-q-info" class="text-[10px] bg-white/20 px-2 py-0.5 rounded font-bold italic">題庫載入中</span>
@@ -159,18 +152,19 @@
                 <div class="bg-white/10 p-4 rounded-2xl border border-white/10 space-y-4">
                     <div class="flex justify-between items-center">
                         <span id="t-q-idx-label" class="text-[10px] opacity-60 font-black uppercase italic">題目預覽 #01</span>
-                        <div class="flex gap-2">
-                            <button onclick="navigateQuestion(-1)" class="p-1 hover:bg-white/20 rounded-lg"><i data-lucide="chevron-left" class="w-4 h-4"></i></button>
-                            <button onclick="navigateQuestion(1)" class="p-1 hover:bg-white/20 rounded-lg"><i data-lucide="chevron-right" class="w-4 h-4"></i></button>
+                        <div class="flex gap-1">
+                            <button onclick="navigateQuestion(-1)" class="p-1 hover:bg-white/20 rounded-lg transition-all"><i data-lucide="chevron-left" class="w-4 h-4"></i></button>
+                            <button onclick="navigateQuestion(1)" class="p-1 hover:bg-white/20 rounded-lg transition-all"><i data-lucide="chevron-right" class="w-4 h-4"></i></button>
                         </div>
                     </div>
-                    <div id="t-q-preview-text" class="text-sm font-black italic text-indigo-100 min-h-[50px] leading-tight uppercase">任務加載中...</div>
+                    <div id="t-q-preview-text" class="text-sm font-black italic text-indigo-100 min-h-[50px] leading-tight uppercase">任務內容...</div>
                     <button id="sync-btn" onclick="pushSyncQuestion()" class="w-full bg-indigo-500 py-3 rounded-xl text-[10px] font-black uppercase italic shadow-md hover:bg-indigo-400 transition-all flex items-center justify-center gap-2">
                         <i data-lucide="refresh-cw" class="w-3 h-3"></i> 同步此題至全體
                     </button>
                 </div>
                 <div class="bg-white/10 p-4 rounded-2xl text-center">
-                    <div id="t-avg-progress-text" class="text-xl font-black italic text-indigo-300 uppercase tracking-tighter">AVG: 0%</div>
+                    <div id="t-avg-progress-text" class="text-xl font-black italic text-indigo-300 uppercase tracking-tighter text-indigo-300">AVG: 0%</div>
+                    <div id="t-timer-display" class="text-xl font-black text-rose-400 mt-2 hidden italic">10:00</div>
                 </div>
             </div>
 
@@ -208,12 +202,11 @@
             <div id="pause-overlay" class="hidden absolute inset-0 bg-slate-900/80 z-[60] flex items-center justify-center text-white text-5xl font-black italic uppercase animate-pulse">Battle On Hold</div>
 
             <div class="p-10 h-full flex flex-col">
-                <div class="mb-6 flex justify-between items-center text-slate-900">
+                <div class="mb-6 flex justify-between items-center text-slate-900 font-black">
                     <span id="q-type-label" class="bg-slate-900 text-white text-xs font-black px-6 py-2 rounded-full uppercase italic shadow-xl">MISSION INTEL</span>
                     <span id="q-index-label" class="text-slate-300 text-7xl font-black italic tracking-tighter">#01</span>
                 </div>
                 
-                <!-- 題目顯示 -->
                 <div id="q-content-text" class="font-black text-slate-900 tracking-tighter leading-tight italic uppercase mb-10 flex items-center justify-center text-center px-6 transition-all" style="flex: 0 0 120px;">
                     LOADING Intel...
                 </div>
@@ -228,7 +221,7 @@
                         <div id="canvas-tools" class="flex flex-col gap-4 w-48">
                             <button onclick="setTool('pen')" id="tool-pen" class="w-full bg-indigo-600 text-white py-5 rounded-3xl shadow-lg border-4 border-indigo-300 flex flex-col items-center gap-1 font-black transition-all"><i data-lucide="pen-tool" class="w-6 h-6"></i>黑筆</button>
                             <button onclick="setTool('eraser')" id="tool-eraser" class="w-full bg-slate-200 text-slate-500 py-5 rounded-3xl flex flex-col items-center gap-1 font-black transition-all hover:bg-slate-300"><i data-lucide="eraser" class="w-6 h-6"></i>橡皮擦</button>
-                            <button onclick="undoAction()" class="w-full bg-slate-200 text-slate-500 py-5 rounded-3xl flex flex-col items-center gap-1 font-black transition-all hover:bg-slate-300"><i data-lucide="undo-2" class="w-6 h-6"></i>上一步</button>
+                            <button onclick="undoAction()" class="w-full bg-slate-200 text-slate-500 py-5 rounded-3xl flex flex-col items-center gap-1 font-black transition-all hover:bg-slate-300"><i data-lucide="undo-2" class="w-6 h-6"></i>返回上步</button>
                             <button onclick="clearCanvas()" class="w-full bg-slate-200 text-slate-500 py-5 rounded-3xl flex flex-col items-center gap-1 font-black transition-all hover:bg-slate-300"><i data-lucide="trash-2" class="w-6 h-6"></i>清除</button>
                             <div class="h-10"></div>
                             <button onclick="submitHandwriting()" class="w-full bg-emerald-600 text-white py-8 rounded-[2.5rem] text-4xl font-black shadow-2xl hover:bg-emerald-700 active:scale-95 transition-all italic tracking-widest">TRANSMIT</button>
@@ -252,7 +245,7 @@
         </div>
     </div>
 
-    <!-- 5. 全螢幕奪取領地 (答對時) -->
+    <!-- 5. 全螢幕領地奪取 (Modal) -->
     <div id="attack-modal" class="hidden fixed inset-0 bg-slate-900/90 backdrop-blur-xl z-[150] flex flex-col items-center justify-center p-10 animate-in zoom-in duration-500">
         <h2 class="text-6xl font-black text-white italic uppercase mb-12 text-center leading-tight tracking-tighter">
             <i data-lucide="target" class="w-16 h-16 text-orange-500 inline-block mr-4"></i> MISSION SUCCESS!<br>CAPTURE THE TERRITORY!
@@ -265,13 +258,13 @@
 
     <!-- 6. 頒獎台 -->
     <div id="podium-screen" class="hidden full-screen-panel bg-slate-900/95 backdrop-blur-xl z-[200] flex flex-col items-center justify-center p-10 animate-in fade-in duration-1000">
-        <h2 class="text-7xl font-black text-white italic uppercase mb-20 tracking-tighter">Battle Accomplished</h2>
+        <h2 class="text-6xl font-black text-white italic uppercase mb-20 tracking-tighter">Battle Accomplished</h2>
         <div class="flex items-end gap-10 max-w-5xl w-full justify-center text-slate-900">
             <div class="flex flex-col items-center gap-8 text-slate-400"><div id="rank-2-name" class="text-3xl font-black italic uppercase truncate w-40 text-center">--</div><div class="podium-2 w-56 rounded-t-[4rem] flex items-center justify-center text-8xl font-black text-white shadow-2xl">2</div></div>
             <div class="flex flex-col items-center gap-10 text-yellow-400"><div id="rank-1-name" class="text-6xl font-black italic uppercase truncate w-60 text-center drop-shadow-[0_0_30px_rgba(250,204,21,0.6)]">--</div><div class="podium-1 w-64 rounded-t-[5rem] flex items-center justify-center text-9xl font-black text-white shadow-[0_-20px_70px_rgba(234,179,8,0.5)]">1</div></div>
             <div class="flex flex-col items-center gap-8 text-amber-600"><div id="rank-3-name" class="text-2xl font-black italic uppercase truncate w-40 text-center">--</div><div class="podium-3 w-48 rounded-t-[3rem] flex items-center justify-center text-5xl font-black text-white shadow-2xl">3</div></div>
         </div>
-        <button onclick="location.reload()" class="mt-28 bg-white text-slate-900 px-20 py-6 rounded-full font-black text-3xl shadow-2xl hover:bg-slate-200 transition-all uppercase italic">Return to Base</button>
+        <button onclick="location.reload()" class="mt-28 bg-white text-slate-900 px-20 py-6 rounded-full font-black text-3xl shadow-2xl hover:bg-slate-200 transition-all uppercase italic">Return to Headquarters</button>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/qrcode@1.4.4/build/qrcode.min.js"></script>
@@ -280,11 +273,9 @@
         import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, doc, setDoc, onSnapshot, updateDoc, arrayUnion, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // APP_ID 全新穩定頻道
-        const STABLE_APP_ID = 'territory-war-stable-v500';
+        const STABLE_APP_ID = 'territory-battle-final-stable-v501';
         const firebaseConfig = { apiKey: "AIzaSyBBIi6sw-wUzp-Jxc3dXJhl5DZ3-6LMe-o", authDomain: "my-handwriting-tool.firebaseapp.com", projectId: "my-handwriting-tool", storageBucket: "my-handwriting-tool.firebasestorage.app", messagingSenderId: "649810632937", appId: "1:649810632937:web:085f7e5c8f5290d6da9078", measurementId: "G-12B4P0QCGH" };
 
-        // 全域函數綁定 (修正 toggleTargetNum 未定義報錯)
         Object.assign(window, { switchRole, chooseHand, setTool, undoAction, addQuestionRow, handleTeacherInit, confirmStudentName, setPreGrade, finalSubmitGrade, submitMultiAnswer, submitHandwriting, clearCanvas, copyJoinLink, toggleTargetNum, toggleOption, navigateQuestion, pushSyncQuestion });
 
         const qListContainer = document.getElementById('question-list');
@@ -314,6 +305,11 @@
             if(role === 'teacher') {
                 document.getElementById('teacher-setup-screen').classList.remove('hidden');
                 QRCode.toCanvas(qrCanvas, window.location.href, { width: 250, margin: 1 });
+                // 預設題庫回歸
+                qListContainer.innerHTML = '';
+                addQuestionRow('hand', '戰:請寫出挑戰之戰的戰字');
+                addQuestionRow('choice', '哪一個是台灣第一高峰？', '玉山,雪山,大霸尖山', '玉山');
+                addQuestionRow('boolean', '我們正在進行領地爭奪戰嗎？', '', '是');
             } else { document.getElementById('player-select-screen').classList.remove('hidden'); }
             if(gameState) syncUI(gameState);
             lucide.createIcons();
@@ -321,7 +317,7 @@
 
         function toggleTargetNum() {
             const mode = document.getElementById('t-game-mode').value;
-            // 這裡不需要複雜邏輯，主要是為了讓 select 的 UI 正常反應
+            // 控制目標題數輸入框的 UI
         }
 
         function chooseHand(h) {
@@ -354,7 +350,7 @@
             const ps = gameState.lobbyPlayers.map((lp, i) => ({ id: lp.id, name: lp.name, colorClass: `p-${(i%8)+1}-color`, bgClass: `p-${(i%8)+1}-bg`, score: 0 }));
             await setDoc(doc(db, 'artifacts', STABLE_APP_ID, 'public', 'data', 'gameSession', 'main'), {
                 config: { playerCount: ps.length, mode: document.getElementById('t-game-mode').value, target: parseInt(document.getElementById('t-target-num').value), battleMode: document.getElementById('t-battle-mode').value },
-                questions: qs, players: ps, cells: generateCells(ps.length, qs.length, ps), status: 'playing', forcedQIdx: 0, lastUpdate: Date.now()
+                questions: qs, players: ps, cells: generateCells(ps.length, qs.length, ps), status: 'playing', forcedQIdx: 0, startTime: Date.now(), lastUpdate: Date.now()
             });
         }
 
@@ -375,7 +371,7 @@
             if(role === 'teacher') {
                 document.getElementById('join-stats-header').innerText = `已報到：${ps_lobby.length} 人`;
                 document.getElementById('ready-count').innerText = ps_lobby.length;
-                document.getElementById('teacher-lobby-list').innerHTML = ps_lobby.map((p, i) => `<div class="bg-white p-3 rounded-lg border flex items-center gap-3 text-slate-800 shadow-sm font-black italic"><div class="w-4 h-4 rounded-full p-${(i%8)+1}-bg"></div><span>${p.name}</span></div>`).join('');
+                document.getElementById('teacher-lobby-list').innerHTML = ps_lobby.map((p, i) => `<div class="bg-white p-3 rounded-lg border flex items-center gap-3 text-slate-800 shadow-sm font-black italic"><div class="w-4 h-4 rounded-full p-${(i%8)+1}-bg shadow-inner"></div><span>${p.name}</span></div>`).join('');
                 document.getElementById('start-battle-btn').disabled = ps_lobby.length < 1;
             }
             if(data.status === 'playing') {
@@ -385,7 +381,14 @@
                     document.getElementById('teacher-hud').classList.remove('hidden'); document.getElementById('teacher-grading-panel').classList.remove('hidden'); document.getElementById('battle-summary-container').classList.remove('hidden');
                     document.getElementById('t-total-q-info').innerText = `${data.questions?.length || 0} 題`;
                     const max = data.config.mode === 'target_count' ? data.config.target : data.questions?.length || 1, avg = (data.players.reduce((a,b)=>a+b.score, 0) / (data.players.length || 1)), pct = Math.min(100, Math.round((avg / max) * 100));
-                    document.getElementById('t-avg-progress-text').innerText = `AVG: ${pct}%`; document.getElementById('t-progress-bar').style.width = pct + '%'; updateTeacherPreview();
+                    document.getElementById('t-avg-progress-text').innerText = `AVG: ${pct}%`; document.getElementById('t-progress-bar').style.width = pct + '%';
+                    if(data.config.mode === 'time') {
+                        document.getElementById('t-timer-display').classList.remove('hidden');
+                        const rem = Math.max(0, (data.config.target * 60) - Math.floor((Date.now() - data.startTime)/1000));
+                        document.getElementById('t-timer-display').innerText = `${Math.floor(rem/60)}:${(rem%60).toString().padStart(2,'0')}`;
+                        if(rem <= 0) checkWinCondition(true);
+                    }
+                    updateTeacherPreview();
                     const area = document.getElementById('grading-area'), em = document.getElementById('grading-queue-empty');
                     if(data.gradingQueue?.length > 0) {
                         area.classList.remove('hidden'); em.classList.add('hidden'); const t = data.gradingQueue[0];
@@ -399,7 +402,7 @@
                         if(data.config.battleMode === 'sync' && data.forcedQIdx !== currentQIdx) { currentQIdx = data.forcedQIdx; startStudentTurn(); }
                         else if(document.getElementById('student-answer-panel').classList.contains('hidden')) startStudentTurn();
                     }
-                    const res = data.lastGradeResult; if(res && res.studentId === currentPlayerId && (!window._lastResId || window._lastResId !== res.timestamp)) { window._lastResId = res.timestamp; handleGradingResult(res.isCorrect); }
+                    const res = data.lastGradeResult; if(res && res.studentId === currentPlayerId && (!window._lastId || window._lastId !== res.timestamp)) { window._lastId = res.timestamp; handleGradingResult(res.isCorrect); }
                 }
             }
             if(data.status === 'finished') { showPodium(data.players || []); }
@@ -430,7 +433,7 @@
             if(!canAttack) return;
             const cell = gameState.cells.find(c => c.id === cid), mc = gameState.cells.filter(c => c.owner === currentPlayerId); 
             if(cell.owner === currentPlayerId || !mc.some(m => Math.hypot(m.x-cell.x, m.y-cell.y) < 85)) return;
-            cell.owner = currentPlayerId; await updateDoc(doc(db, 'artifacts', STABLE_ID, 'public', 'data', 'gameSession', 'main'), { cells: gameState.cells });
+            cell.owner = currentPlayerId; await updateDoc(doc(db, 'artifacts', STABLE_APP_ID, 'public', 'data', 'gameSession', 'main'), { cells: gameState.cells });
             canAttack = false; document.getElementById('attack-modal').classList.add('hidden');
             if(gameState.config.battleMode === 'self') { currentQIdx++; startStudentTurn(); }
             checkWinCondition();
@@ -452,11 +455,11 @@
                 document.getElementById('multi-submit-btn').classList.toggle('hidden', !q.isMulti);
             }
         }
-        function adjustFontSize(el, len) { let s = 80; if(len>10) s=50; if(len>20) s=35; el.style.fontSize = s+'px'; }
+        function adjustFontSize(el, len) { let s = 80; if(len>10) s=55; if(len>20) s=35; el.style.fontSize = s+'px'; }
 
         function toggleOption(o) {
             const q = gameState.questions[currentQIdx % gameState.questions.length];
-            if(q.isMulti) { if(multiSelected.includes(o)) { multiSelected = multiSelected.filter(i => i !== o); document.getElementById(`opt-${o}`).classList.remove('border-indigo-500'); document.getElementById(`check-${o}`).classList.add('hidden'); } else { multiSelected.push(o); document.getElementById(`opt-${o}`).classList.add('border-indigo-500'); document.getElementById(`check-${o}`).classList.remove('hidden'); } } else { submitStudentAnswer(o); }
+            if(q.isMulti) { if(multiSelected.includes(o)) { multiSelected = multiSelected.filter(i => i !== o); document.getElementById(`opt-${o}`).classList.remove('border-indigo-600'); document.getElementById(`check-${o}`).classList.add('hidden'); } else { multiSelected.push(o); document.getElementById(`opt-${o}`).classList.add('border-indigo-500'); document.getElementById(`check-${o}`).classList.remove('hidden'); } } else { submitStudentAnswer(o); }
         }
         function submitMultiAnswer() { submitStudentAnswer(multiSelected.join(',')); }
         async function submitStudentAnswer(ans) {
@@ -470,7 +473,7 @@
         async function submitHandwriting() {
             const c = document.getElementById('writing-canvas'), img = c.toDataURL();
             document.getElementById('wait-overlay').classList.remove('hidden');
-            await updateDoc(doc(db, 'artifacts', STABLE_ID, 'public', 'data', 'gameSession', 'main'), { gradingQueue: arrayUnion({ studentId: currentPlayerId, studentName: miName(), type:'hand', answerImg: img, timestamp: Date.now() }) });
+            await updateDoc(doc(db, 'artifacts', STABLE_APP_ID, 'public', 'data', 'gameSession', 'main'), { gradingQueue: arrayUnion({ studentId: currentPlayerId, studentName: miName(), type:'hand', answerImg: img, timestamp: Date.now() }) });
         }
         function miName() { return gameState.players?.find(p=>p.id===currentPlayerId)?.name || "勇者"; }
 
@@ -483,15 +486,16 @@
         async function finalSubmitGrade() {
             if(preGradeValue === null || !gameState.gradingQueue.length) return;
             const t = gameState.gradingQueue[0], ups = gameState.players.map(p => { if(p.id === t.studentId && preGradeValue) p.score += 1; return p; });
-            await updateDoc(doc(db, 'artifacts', STABLE_ID, 'public', 'data', 'gameSession', 'main'), { players: ups, gradingQueue: gameState.gradingQueue.slice(1), lastGradeResult: { studentId: t.studentId, isCorrect: preGradeValue, timestamp: Date.now() } });
+            await updateDoc(doc(db, 'artifacts', STABLE_APP_ID, 'public', 'data', 'gameSession', 'main'), { players: ups, gradingQueue: gameState.gradingQueue.slice(1), lastGradeResult: { studentId: t.studentId, isCorrect: preGradeValue, timestamp: Date.now() } });
             document.getElementById('confirm-grade-btn').classList.add('hidden');
         }
 
-        async function checkWinCondition() {
-            const me = gameState.players?.find(p=>p.id === currentPlayerId); if(!me) return;
-            if(gameState.config.mode === 'target_count' && me.score >= gameState.config.target) {
-                await updateDoc(doc(db, 'artifacts', STABLE_ID, 'public', 'data', 'gameSession', 'main'), { status: 'finished' });
-            }
+        async function checkWinCondition(isTimeUp = false) {
+            const me = gameState.players?.find(p=>p.id === currentPlayerId); if(!me && !isTimeUp) return;
+            let win = isTimeUp;
+            if(gameState.config.mode === 'target_count' && me?.score >= gameState.config.target) win = true;
+            if(gameState.config.mode === 'complete_all' && me?.score >= gameState.questions.length) win = true;
+            if(win) await updateDoc(doc(db, 'artifacts', STABLE_APP_ID, 'public', 'data', 'gameSession', 'main'), { status: 'finished' });
         }
 
         function generateCells(pc, qc, ps) { const cells = [], ast = 360 / pc; for(let p=0; p<pc; p++) { const ins = ast * p + 12, ine = ast * (p+1) - 12; for(let q=0; q<qc; q++) { const r = (220/5) * ((q % 4) + 1) + 30, ang = ins + (ine - ins) * (q/qc) + (ine-ins)/(qc*2), rad = (ang - 90) * Math.PI / 180; cells.push({ id: `c_${p}_${q}`, owner: ps[p].id, x: 275 + r * Math.cos(rad), y: 275 + r * Math.sin(rad) }); } } return cells; }
