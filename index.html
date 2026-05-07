@@ -30,39 +30,36 @@
         }
         .writing-bg-text { font-family: "KaiTi", "標楷體", serif; color: rgba(0,0,0,0.06); pointer-events: none; user-select: none; }
         .full-screen-panel { width: 100vw; height: 100vh; position: fixed; top: 0; left: 0; z-index: 50; }
-        .custom-scrollbar::-webkit-scrollbar { width: 5px; }
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
-        .podium-1 { height: 160px; background: linear-gradient(to top, #facc15, #eab308); }
-        .podium-2 { height: 120px; background: linear-gradient(to top, #94a3b8, #64748b); }
-        .podium-3 { height: 80px; background: linear-gradient(to top, #b45309, #78350f); }
         .pulse-attack { animation: pulse 2s infinite; }
         @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(249, 115, 22, 0.7); } 70% { box-shadow: 0 0 0 20px rgba(249, 115, 22, 0); } 100% { box-shadow: 0 0 0 0 rgba(249, 115, 22, 0); } }
     </style>
 </head>
 <body class="min-h-screen overflow-hidden bg-slate-50">
 
-    <!-- 1. 入口 -->
+    <!-- 1. 入口身分選擇 -->
     <div id="entry-screen" class="full-screen-panel bg-slate-900 flex flex-col items-center justify-center p-6 z-[100]">
         <div class="text-center space-y-12 w-full max-w-4xl">
             <h1 class="text-7xl font-black text-white italic uppercase tracking-tighter">領地爭奪 <span class="text-indigo-500">Battle</span></h1>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8 px-4 text-slate-900">
                 <button onclick="switchRole('teacher')" class="group bg-white/5 border-2 border-white/10 p-12 rounded-[3rem] hover:bg-white hover:border-indigo-500 transition-all flex flex-col items-center gap-6 shadow-2xl">
                     <i data-lucide="graduation-cap" class="w-20 h-20 text-indigo-500 group-hover:rotate-12 transition-transform"></i>
-                    <div class="text-3xl font-black text-white group-hover:text-slate-900 uppercase italic">我是教師</div>
+                    <div class="text-4xl font-black text-white group-hover:text-slate-900 uppercase italic">我是教師</div>
                 </button>
                 <button onclick="switchRole('student')" class="group bg-white/5 border-2 border-white/10 p-12 rounded-[3rem] hover:bg-white hover:border-emerald-500 transition-all flex flex-col items-center gap-6 shadow-2xl">
                     <i data-lucide="sword" class="w-20 h-20 text-emerald-500 group-hover:-rotate-12 transition-transform"></i>
-                    <div class="text-3xl font-black text-white group-hover:text-slate-900 uppercase italic">我是學生</div>
+                    <div class="text-4xl font-black text-white group-hover:text-slate-900 uppercase italic">我是學生</div>
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- 2. 教師候戰大廳 -->
+    <!-- 2. 教師候戰大廳 (Lobby) -->
     <div id="teacher-setup-screen" class="hidden full-screen-panel bg-white text-slate-900 flex flex-col">
         <header class="p-4 border-b-2 border-slate-200 flex justify-between items-center bg-white z-10 shadow-sm">
             <h2 class="text-2xl font-black italic">司令部 <span class="text-indigo-600 uppercase">Lobby</span></h2>
-            <div id="join-stats-header" class="bg-indigo-600 text-white px-5 py-1.5 rounded-full text-sm font-black italic uppercase">報到: 0 勇者</div>
+            <div id="join-stats-header" class="bg-indigo-600 text-white px-5 py-1.5 rounded-full text-sm font-black uppercase italic">0 Students Ready</div>
             <button onclick="location.reload()" class="text-slate-400 hover:text-rose-500 transition-all"><i data-lucide="x-circle" class="w-8 h-8"></i></button>
         </header>
         <div class="flex-1 flex overflow-hidden">
@@ -80,14 +77,14 @@
                         <option value="sync">教師導航 (全班同步)</option>
                         <option value="self">自主挑戰 (各自進度)</option>
                     </select>
-                    <label class="block text-xs font-black uppercase text-slate-400 italic">獲勝條件</label>
+                    <label class="block text-xs font-black uppercase text-slate-400 italic">完賽條件設定</label>
                     <select id="t-game-mode" onchange="toggleTargetNum()" class="w-full p-3 rounded-xl border-2 font-black text-slate-900">
                         <option value="time">指定挑戰時間 (分鐘)</option>
                         <option value="complete_all">答完全部題庫</option>
                         <option value="target_count" selected>指定達成題數</option>
                     </select>
                     <div id="target-count-box">
-                        <label id="target-label" class="block text-[10px] font-black uppercase text-slate-400 italic">設定目標</label>
+                        <label id="target-label" class="block text-[10px] font-black uppercase text-slate-400 italic">目標量設定</label>
                         <input type="number" id="t-target-num" value="5" class="w-full p-3 rounded-xl border-2 font-black text-slate-900">
                     </div>
                 </div>
@@ -101,23 +98,24 @@
                         <button onclick="addQuestionRow('boolean')" class="bg-amber-500 text-white px-4 py-2 rounded-lg font-black text-xs shadow-md">+ 是非</button>
                     </div>
                 </div>
-                <div id="question-list" class="flex-1 space-y-3 overflow-y-auto pr-4 custom-scrollbar text-slate-900"></div>
+                <div id="question-list" class="flex-1 space-y-3 overflow-y-auto pr-4 custom-scrollbar"></div>
             </div>
+            <!-- 右側名單：提供移除功能 -->
             <div class="w-[280px] bg-slate-100 border-l p-6 overflow-y-auto custom-scrollbar">
                 <h3 class="font-black text-xs uppercase text-slate-400 mb-4 flex justify-between">已就緒勇者 <span id="ready-count" class="text-indigo-600 font-black">0</span></h3>
                 <div id="teacher-lobby-list" class="space-y-3 text-slate-900 italic font-black"></div>
             </div>
         </div>
-        <div class="p-6 border-t-2 bg-white">
+        <div class="p-6 border-t-2 bg-white shadow-xl">
             <button onclick="handleTeacherInit()" id="start-battle-btn" class="w-full bg-slate-900 text-white font-black py-5 rounded-2xl text-2xl uppercase italic tracking-widest shadow-xl disabled:opacity-20 transition-all" disabled>Initiate Battle</button>
         </div>
     </div>
 
-    <!-- 3. 學生登錄：名稱 + 慣用手 -->
+    <!-- 3. 學生登錄：名稱 + 左右手 -->
     <div id="player-select-screen" class="hidden full-screen-panel bg-slate-900 flex flex-col items-center justify-center p-6 z-[65]">
         <div class="max-w-md w-full bg-white p-10 rounded-[4rem] shadow-2xl text-center space-y-8 relative border-[12px] border-slate-800">
-            <h2 class="text-4xl font-black italic uppercase text-slate-900">戰士報到</h2>
-            <input type="text" id="user-name-input" maxlength="10" placeholder="您的代號..." class="w-full border-b-4 border-slate-100 p-4 text-center text-3xl font-black outline-none focus:border-indigo-600 text-slate-900">
+            <h2 class="text-4xl font-black italic uppercase text-slate-900 font-black">戰士報到</h2>
+            <input type="text" id="user-name-input" maxlength="10" placeholder="您的戰鬥代號..." class="w-full border-b-4 border-slate-100 p-4 text-center text-3xl font-black outline-none focus:border-indigo-600 text-slate-900">
             <div class="grid grid-cols-2 gap-4">
                 <button onclick="chooseHand('left')" id="hand-left-btn" class="p-6 border-4 border-slate-100 rounded-3xl flex flex-col items-center gap-2 hover:border-indigo-500 transition-all">
                     <i data-lucide="hand" class="w-12 h-12 -scale-x-100"></i>
@@ -129,13 +127,12 @@
                 </button>
             </div>
             <button id="student-confirm-btn" onclick="confirmStudentName()" class="w-full bg-slate-900 text-white py-5 rounded-2xl font-black text-xl shadow-xl">確認部署</button>
-            <div id="student-status-hint" class="hidden py-4 text-indigo-600 font-black animate-pulse text-xl">已連線至司令部，待命開戰...</div>
+            <div id="student-status-hint" class="hidden py-4 text-indigo-600 font-black animate-pulse text-xl uppercase">Waiting for Command...</div>
         </div>
     </div>
 
-    <!-- 4. 正式戰場介面 (3/4 佈局) -->
+    <!-- 4. 正式戰場 (3/4 佈局) -->
     <div id="game-screen" class="hidden full-screen-panel bg-slate-100 flex overflow-hidden text-slate-900 font-black">
-        
         <!-- 側邊欄 (1/4) -->
         <div id="sidebar-info" class="w-1/4 bg-white border-r-2 border-slate-200 p-6 flex flex-col gap-6 shadow-xl z-20 overflow-y-auto custom-scrollbar">
             <div id="student-info-panel" class="bg-slate-900 p-5 rounded-[2rem] text-white shadow-md">
@@ -148,7 +145,7 @@
                 </div>
             </div>
 
-            <!-- 教師控制中心 (僅教師) -->
+            <!-- 教師指揮中心 (僅教師) -->
             <div id="teacher-hud" class="hidden bg-indigo-900 p-5 rounded-[2.5rem] text-white space-y-4 shadow-2xl">
                 <div class="flex justify-between items-center">
                     <h3 class="text-[10px] font-black uppercase tracking-widest flex items-center gap-1"><i data-lucide="command" class="w-3 h-3 text-indigo-400"></i> 指揮儀表板</h3>
@@ -188,13 +185,13 @@
             <div id="teacher-grading-panel" class="hidden bg-white p-5 rounded-[2.5rem] border-4 border-orange-400 shadow-lg text-slate-900">
                 <h2 class="text-xs font-black mb-4 italic uppercase flex items-center gap-2 text-slate-900 font-black"><i data-lucide="target" class="w-4 h-4 text-orange-500"></i> 戰果審查</h2>
                 <div id="grading-queue-empty" class="text-center py-6 text-slate-200 font-black italic text-[10px] uppercase italic tracking-tighter">Awaiting Intel...</div>
-                <div id="grading-area" class="hidden space-y-4 text-slate-900">
+                <div id="grading-area" class="hidden space-y-4">
                     <div id="grading-content-box" class="bg-slate-50 rounded-xl min-h-[120px] flex items-center justify-center shadow-inner border overflow-hidden text-2xl font-black italic uppercase text-slate-900"></div>
                     <div class="grid grid-cols-2 gap-2 text-slate-900 font-black">
                         <button onclick="setPreGrade(true)" class="bg-emerald-600 text-white p-4 rounded-xl font-black text-3xl shadow-lg hover:bg-emerald-700 active:scale-90 transition-all text-white font-black">○</button>
                         <button onclick="setPreGrade(false)" class="bg-rose-600 text-white p-4 rounded-xl font-black text-3xl shadow-lg hover:bg-rose-700 active:scale-90 transition-all text-white font-black">×</button>
                     </div>
-                    <button onclick="finalSubmitGrade()" id="confirm-grade-btn" class="hidden w-full bg-slate-900 text-white py-4 rounded-xl text-xs font-black uppercase italic shadow-2xl">AUTHORIZE</button>
+                    <button onclick="finalSubmitGrade()" id="confirm-grade-btn" class="hidden w-full bg-slate-900 text-white py-4 rounded-xl text-xs font-black uppercase italic shadow-2xl">核可戰果</button>
                 </div>
             </div>
         </div>
@@ -314,7 +311,7 @@
             currentPlayerId = user.uid;
             const ref = doc(db, 'artifacts', MASTER_STABLE_ID, 'public', 'data', 'gameSession', 'main');
             
-            // 使用暴力寫入方案：如果文件不存在就 setDoc，存在就 updateDoc
+            // 暴力寫入方案：確保數據能寫入未創建的文件
             const snap = await getDoc(ref);
             if(!snap.exists()) {
                 await setDoc(ref, { status: 'lobby', lobbyPlayers: [{ id: currentPlayerId, name }], lastUpdate: Date.now() });
@@ -345,7 +342,7 @@
 
         function toggleTargetNum() {
             const mode = document.getElementById('t-game-mode').value;
-            document.getElementById('target-label').innerText = mode === 'time' ? '挑戰時間 (分鐘)' : '設定量';
+            document.getElementById('target-label').innerText = mode === 'time' ? '挑戰時間 (分鐘)' : '目標量';
         }
 
         function chooseHand(h) {
@@ -387,9 +384,12 @@
         async function pushSyncQuestion() { await updateDoc(doc(db, 'artifacts', MASTER_STABLE_ID, 'public', 'data', 'gameSession', 'main'), { forcedQIdx: teacherPreviewIdx, lastUpdate: Date.now() }); }
 
         function syncUI(data) {
+            // 如果戰場被關閉，全體強制登出
             if(data.status === 'closed') { location.reload(); return; }
+            
             gameState = data;
             const ps_lobby = data.lobbyPlayers || []; 
+            // 如果自己被踢了， reload
             if(role === 'student' && currentPlayerId && !ps_lobby.some(p => p.id === currentPlayerId)) { location.reload(); return; }
 
             if(role === 'teacher') {
@@ -426,7 +426,7 @@
                     const mi = data.players.find(p=>p.id === currentPlayerId);
                     if(mi) {
                         document.getElementById('my-name-display').innerText = mi.name; document.getElementById('my-color-preview').className = `w-14 h-14 rounded-full border-4 border-white/10 ${mi.bgClass}`; document.getElementById('game-progress').innerText = `SCORE: ${mi.score}`;
-                        // 強制加載邏輯：如果抓不到題目內容或還在 Loading，強制執行一次題目獲取
+                        // 強制加載：只要資料庫有題目，且畫面上還在 LOADING，就強制執行渲染
                         if(data.questions && data.questions.length > 0) {
                              if(data.config.battleMode === 'sync' && data.forcedQIdx !== currentQIdx) { currentQIdx = data.forcedQIdx; startStudentTurn(); }
                              else if(document.getElementById('student-answer-panel').classList.contains('hidden') || document.getElementById('q-content-text').innerText.includes('LOADING')) startStudentTurn();
@@ -477,7 +477,7 @@
             if(q.type === 'hand') { document.getElementById('handwriting-area').classList.remove('hidden'); document.getElementById('writing-guide').innerText = q.answer; initCanvas(); }
             else {
                 document.getElementById('choice-area').classList.remove('hidden'); const opts = q.type === 'boolean' ? ['對', '錯'] : q.options;
-                document.getElementById('options-container').innerHTML = opts.map(o => `<button onclick="toggleOption('${o}')" id="opt-${o}" class="bg-white border-4 border-slate-100 p-6 rounded-3xl font-black text-2xl text-left hover:bg-slate-50 flex items-center justify-between shadow-sm transition-all text-slate-900">${o} <div class="w-8 h-8 rounded-full border-4 border-slate-100 flex items-center justify-center shadow-inner"><div id="check-${o}" class="w-5 h-5 rounded-full bg-indigo-600 hidden"></div></div></button>`).join('');
+                document.getElementById('options-container').innerHTML = opts.map(o => `<button onclick="toggleOption('${o}')" id="opt-${o}" class="bg-white border-4 border-slate-100 p-6 rounded-3xl font-black text-2xl text-left hover:bg-slate-50 flex items-center justify-between shadow-sm transition-all text-slate-900 font-black">${o} <div class="w-8 h-8 rounded-full border-4 border-slate-100 flex items-center justify-center shadow-inner"><div id="check-${o}" class="w-5 h-5 rounded-full bg-indigo-600 hidden"></div></div></button>`).join('');
                 document.getElementById('multi-submit-btn').classList.toggle('hidden', !q.isMulti);
             }
         }
