@@ -13,7 +13,6 @@
         .territory-cell { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer; stroke: #fff; stroke-width: 2px; }
         .territory-cell:hover { filter: brightness(1.1); transform: scale(1.15); stroke-width: 3px; z-index: 10; }
         
-        /* 玩家代表色 */
         .p-1-bg { background-color: #ff4d6d; } .p-1-color { fill: #ff4d6d; }
         .p-2-bg { background-color: #3b82f6; } .p-2-color { fill: #3b82f6; }
         .p-3-bg { background-color: #10b981; } .p-3-color { fill: #10b981; }
@@ -42,28 +41,28 @@
 </head>
 <body class="min-h-screen overflow-hidden bg-slate-50">
 
-    <!-- 1. 入口：身分選擇 (強鎖機制) -->
+    <!-- 1. 入口身分選擇 (強勢鎖定) -->
     <div id="entry-screen" class="full-screen-panel bg-slate-900 flex flex-col items-center justify-center p-6 z-[200]">
         <div class="text-center space-y-12 w-full max-w-4xl">
             <h1 class="text-7xl font-black text-white italic tracking-tighter">領地爭奪 <span class="text-indigo-500 uppercase">Battle</span></h1>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 px-4 text-slate-900">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 px-4 text-slate-900 font-black">
                 <button onclick="switchRole('teacher')" class="group bg-white/5 border-2 border-white/10 p-12 rounded-[3rem] hover:bg-white hover:border-indigo-500 transition-all flex flex-col items-center gap-6 shadow-2xl">
                     <i data-lucide="graduation-cap" class="w-20 h-20 text-indigo-500 group-hover:rotate-12 transition-transform"></i>
-                    <div class="text-4xl font-black text-white group-hover:text-slate-900 uppercase italic">我是教師</div>
+                    <div class="text-4xl font-black text-white group-hover:text-slate-900 uppercase italic font-black">我是教師</div>
                 </button>
                 <button onclick="switchRole('student')" class="group bg-white/5 border-2 border-white/10 p-12 rounded-[3rem] hover:bg-white hover:border-emerald-500 transition-all flex flex-col items-center gap-6 shadow-2xl">
                     <i data-lucide="sword" class="w-20 h-20 text-emerald-500 group-hover:-rotate-12 transition-transform"></i>
-                    <div class="text-4xl font-black text-white group-hover:text-slate-900 uppercase italic">我是學生</div>
+                    <div class="text-4xl font-black text-white group-hover:text-slate-900 uppercase italic font-black">我是學生</div>
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- 2. 教師候戰大廳 -->
+    <!-- 2. 教師大廳 -->
     <div id="teacher-setup-screen" class="hidden full-screen-panel bg-white text-slate-900 flex flex-col">
         <header class="p-4 border-b-2 border-slate-200 flex justify-between items-center bg-white z-10 shadow-sm">
             <h2 class="text-2xl font-black italic">司令部 <span class="text-indigo-600 uppercase">Lobby</span></h2>
-            <div id="join-stats-header" class="bg-indigo-600 text-white px-5 py-1.5 rounded-full text-sm font-black uppercase italic">0 Students Connected</div>
+            <div id="join-stats-header" class="bg-indigo-600 text-white px-5 py-1.5 rounded-full text-sm font-black uppercase italic">Connected: 0 Students</div>
             <button onclick="location.reload()" class="text-slate-400 hover:text-rose-500 transition-all"><i data-lucide="x-circle" class="w-8 h-8"></i></button>
         </header>
         <div class="flex-1 flex overflow-hidden">
@@ -77,8 +76,8 @@
                 </div>
                 <div class="space-y-4">
                     <label class="block text-xs font-black uppercase text-slate-400 italic">引導模式</label>
-                    <select id="t-battle-mode" class="w-full p-3 rounded-xl border-2 font-black text-slate-900 outline-none focus:border-indigo-500">
-                        <option value="sync">教師導航 (全班同步)</option>
+                    <select id="t-battle-mode" class="w-full p-3 rounded-xl border-2 font-black text-slate-900 outline-none">
+                        <option value="sync">教師導航 (同步控制)</option>
                         <option value="self" selected>學生自主 (各自進度)</option>
                     </select>
                     <label class="block text-xs font-black uppercase text-slate-400 italic">獲勝條件</label>
@@ -88,26 +87,26 @@
                         <option value="target_count" selected>指定達成題數</option>
                     </select>
                     <div id="target-count-box">
-                        <label id="target-label" class="block text-[10px] font-black uppercase text-slate-400 italic">設定目標</label>
+                        <label id="target-label" class="block text-[10px] font-black uppercase text-slate-400 italic">設定量</label>
                         <input type="number" id="t-target-num" value="5" class="w-full p-3 rounded-xl border-2 font-black text-slate-900">
                     </div>
                 </div>
             </div>
             <div class="flex-1 p-8 flex flex-col overflow-hidden text-slate-900 font-black">
                 <div class="flex justify-between items-center mb-6">
-                    <h3 class="text-xl font-black italic flex items-center gap-2"><i data-lucide="scroll-text" class="text-indigo-600"></i>任務題庫配置</h3>
+                    <h3 class="text-xl font-black italic flex items-center gap-2 text-slate-900 font-black"><i data-lucide="scroll-text" class="text-indigo-600"></i>任務配置清單</h3>
                     <div class="flex gap-2">
                         <button onclick="addQuestionRow('hand')" class="bg-indigo-600 text-white px-4 py-2 rounded-lg font-black text-xs shadow-md">+ 手寫</button>
                         <button onclick="addQuestionRow('choice')" class="bg-emerald-600 text-white px-4 py-2 rounded-lg font-black text-xs shadow-md">+ 選擇</button>
                         <button onclick="addQuestionRow('boolean')" class="bg-amber-500 text-white px-4 py-2 rounded-lg font-black text-xs shadow-md">+ 是非</button>
                     </div>
                 </div>
-                <div id="question-list" class="flex-1 space-y-3 overflow-y-auto pr-4 custom-scrollbar"></div>
+                <div id="question-list" class="flex-1 space-y-3 overflow-y-auto pr-4 custom-scrollbar text-slate-900 font-black"></div>
             </div>
-            <!-- 右側報到名單：隨時可踢除 -->
+            <!-- 右側報到名單：提供移除功能 -->
             <div class="w-[280px] bg-slate-100 border-l p-6 overflow-y-auto custom-scrollbar">
-                <h3 class="font-black text-xs uppercase text-slate-400 mb-4 flex justify-between">已就緒勇者 <span id="ready-count" class="text-indigo-600 font-black">0</span></h3>
-                <div id="teacher-lobby-list" class="space-y-3 text-slate-900 font-black"></div>
+                <h3 class="font-black text-xs uppercase text-slate-400 mb-4 flex justify-between italic">即時連線名單 <span id="ready-count" class="text-indigo-600 font-black">0</span></h3>
+                <div id="teacher-lobby-list" class="space-y-3 text-slate-900 italic font-black"></div>
             </div>
         </div>
         <div class="p-6 border-t-2 bg-white">
@@ -115,23 +114,23 @@
         </div>
     </div>
 
-    <!-- 3. 學生登錄：代號 + 慣用手 -->
+    <!-- 3. 學生登錄：代號 + 左右手 -->
     <div id="player-select-screen" class="hidden full-screen-panel bg-slate-900 flex flex-col items-center justify-center p-6 z-[65]">
         <div class="max-w-md w-full bg-white p-10 rounded-[4rem] shadow-2xl text-center space-y-8 relative border-[12px] border-slate-800 animate-in zoom-in duration-300">
             <h2 class="text-4xl font-black italic uppercase text-slate-900 font-black">戰士報到</h2>
-            <input type="text" id="user-name-input" maxlength="10" placeholder="您的代號..." class="w-full border-b-4 border-slate-100 p-4 text-center text-3xl font-black outline-none focus:border-indigo-600 text-slate-900">
-            <div class="grid grid-cols-2 gap-4 font-black">
-                <button onclick="chooseHand('left')" id="hand-left-btn" class="p-6 border-4 border-slate-100 rounded-3xl flex flex-col items-center gap-2 hover:border-indigo-500 transition-all">
+            <input type="text" id="user-name-input" maxlength="10" placeholder="您的戰鬥代號..." class="w-full border-b-4 border-slate-100 p-4 text-center text-3xl font-black outline-none focus:border-indigo-600 text-slate-900">
+            <div class="grid grid-cols-2 gap-4">
+                <button onclick="chooseHand('left')" id="hand-left-btn" class="p-6 border-4 border-slate-100 rounded-3xl flex flex-col items-center gap-2 hover:border-indigo-500 transition-all text-slate-900">
                     <i data-lucide="hand" class="w-12 h-12 -scale-x-100"></i>
-                    <span class="font-black text-slate-900">左撇子</span>
+                    <span class="font-black">左撇子</span>
                 </button>
-                <button onclick="chooseHand('right')" id="hand-right-btn" class="p-6 border-4 border-indigo-500 rounded-3xl flex flex-col items-center gap-2 transition-all text-indigo-600">
+                <button onclick="chooseHand('right')" id="hand-right-btn" class="p-6 border-4 border-indigo-500 rounded-3xl flex flex-col items-center gap-2 transition-all text-indigo-600 shadow-xl">
                     <i data-lucide="hand" class="w-12 h-12"></i>
-                    <span class="font-black text-slate-900">右撇子</span>
+                    <span class="font-black">右撇子</span>
                 </button>
             </div>
             <button id="student-confirm-btn" onclick="confirmStudentName()" class="w-full bg-slate-900 text-white py-5 rounded-2xl font-black text-xl shadow-xl">確認部署</button>
-            <div id="student-status-hint" class="hidden py-4 text-indigo-600 font-black animate-pulse text-xl uppercase italic">Linked to HQ...</div>
+            <div id="student-status-hint" class="hidden py-4 text-indigo-600 font-black animate-pulse text-xl uppercase italic">Communicating with HQ...</div>
         </div>
     </div>
 
@@ -150,7 +149,7 @@
                 </div>
             </div>
 
-            <!-- 教師控制中心 -->
+            <!-- 教師指揮中心 (僅教師見) -->
             <div id="teacher-hud" class="hidden bg-indigo-900 p-5 rounded-[2.5rem] text-white space-y-4 shadow-2xl">
                 <div class="flex justify-between items-center">
                     <h3 class="text-[10px] font-black uppercase tracking-widest flex items-center gap-1"><i data-lucide="command" class="w-3 h-3 text-indigo-400"></i> 指揮儀表板</h3>
@@ -158,13 +157,13 @@
                 </div>
                 <div class="bg-white/10 p-4 rounded-2xl border border-white/10 space-y-4">
                     <div class="flex justify-between items-center">
-                        <span id="t-q-idx-label" class="text-[10px] opacity-60 font-black uppercase">預覽題目 #01</span>
+                        <span id="t-q-idx-label" class="text-[10px] opacity-60 font-black uppercase italic">預覽題目 #01</span>
                         <div class="flex gap-1">
                             <button onclick="navigateQuestion(-1)" class="p-1 hover:bg-white/20 rounded-lg transition-all"><i data-lucide="chevron-left" class="w-4 h-4"></i></button>
                             <button onclick="navigateQuestion(1)" class="p-1 hover:bg-white/20 rounded-lg transition-all"><i data-lucide="chevron-right" class="w-4 h-4"></i></button>
                         </div>
                     </div>
-                    <div id="t-q-preview-text" class="text-sm font-black italic text-indigo-100 min-h-[50px] leading-tight uppercase">任務加載中...</div>
+                    <div id="t-q-preview-text" class="text-sm font-black italic text-indigo-100 min-h-[50px] leading-tight uppercase">內容載入中...</div>
                     <button id="sync-btn" onclick="pushSyncQuestion()" class="w-full bg-indigo-500 py-3 rounded-xl text-[10px] font-black uppercase italic shadow-md hover:bg-indigo-400 transition-all flex items-center justify-center gap-2">
                         <i data-lucide="refresh-cw" class="w-3 h-3"></i> 同步此題至全體
                     </button>
@@ -174,13 +173,13 @@
                     <div id="t-timer-display" class="text-2xl font-black text-rose-400 mt-2 hidden italic">10:00</div>
                 </div>
                 <!-- 勇者管理：隨時移除學生 -->
-                <div id="t-battle-roster" class="space-y-2 max-h-[150px] overflow-y-auto custom-scrollbar"></div>
+                <div id="t-battle-roster" class="space-y-2 max-h-[150px] overflow-y-auto custom-scrollbar text-slate-900 font-black"></div>
                 <button onclick="closeBattlefield()" class="w-full bg-rose-600 py-3 rounded-xl text-[10px] font-black uppercase italic shadow-xl hover:bg-rose-700 active:scale-95 transition-all">結束任務並撤離</button>
             </div>
 
             <!-- 地盤縮圖 -->
             <div class="flex-1 bg-slate-50 rounded-[2.5rem] p-6 flex flex-col items-center justify-center border-2 border-white shadow-inner relative overflow-hidden">
-                <h4 class="absolute top-4 w-full text-center text-[10px] font-black text-slate-300 uppercase tracking-widest italic">戰略地圖預覽</h4>
+                <h4 class="absolute top-4 w-full text-center text-[10px] font-black text-slate-300 uppercase tracking-widest italic font-black">戰略地圖預覽</h4>
                 <div class="w-full max-w-[180px]">
                     <svg id="board-svg-mini" viewBox="0 0 550 550" class="w-full h-auto drop-shadow-lg"></svg>
                 </div>
@@ -188,13 +187,13 @@
 
             <!-- 教師審核 (僅教師見) -->
             <div id="teacher-grading-panel" class="hidden bg-white p-5 rounded-[2.5rem] border-4 border-orange-400 shadow-lg text-slate-900">
-                <h2 class="text-xs font-black mb-4 italic uppercase flex items-center gap-2 text-slate-900 font-black font-black"><i data-lucide="target" class="w-4 h-4 text-orange-500"></i> 戰果審查</h2>
+                <h2 class="text-xs font-black mb-4 italic uppercase flex items-center gap-2 text-slate-900 font-black"><i data-lucide="target" class="w-4 h-4 text-orange-500"></i> 戰果審查</h2>
                 <div id="grading-queue-empty" class="text-center py-6 text-slate-200 font-black italic text-[10px] uppercase italic tracking-tighter">Awaiting Intel...</div>
                 <div id="grading-area" class="hidden space-y-4">
-                    <div id="grading-content-box" class="bg-slate-50 rounded-xl min-h-[120px] flex items-center justify-center shadow-inner border overflow-hidden text-2xl font-black italic uppercase text-slate-900 font-black font-black"></div>
+                    <div id="grading-content-box" class="bg-slate-50 rounded-xl min-h-[120px] flex items-center justify-center shadow-inner border overflow-hidden text-2xl font-black italic uppercase text-slate-900 font-black"></div>
                     <div class="grid grid-cols-2 gap-2 text-slate-900 font-black">
-                        <button onclick="setPreGrade(true)" class="bg-emerald-600 text-white p-4 rounded-xl font-black text-3xl shadow-lg hover:bg-emerald-700 active:scale-90 transition-all font-black font-black">○</button>
-                        <button onclick="setPreGrade(false)" class="bg-rose-600 text-white p-4 rounded-xl font-black text-3xl shadow-lg hover:bg-rose-700 active:scale-90 transition-all font-black font-black font-black">×</button>
+                        <button onclick="setPreGrade(true)" class="bg-emerald-600 text-white p-4 rounded-xl font-black text-3xl shadow-lg hover:bg-emerald-700 active:scale-90 transition-all">○</button>
+                        <button onclick="setPreGrade(false)" class="bg-rose-600 text-white p-4 rounded-xl font-black text-3xl shadow-lg hover:bg-rose-700 active:scale-90 transition-all">×</button>
                     </div>
                     <button onclick="finalSubmitGrade()" id="confirm-grade-btn" class="hidden w-full bg-slate-900 text-white py-4 rounded-xl text-xs font-black uppercase italic shadow-2xl">核可戰果</button>
                 </div>
@@ -206,12 +205,12 @@
             <div id="pause-overlay" class="hidden absolute inset-0 bg-slate-900/80 z-[60] flex items-center justify-center text-white text-5xl font-black italic uppercase animate-pulse">Battle On Hold</div>
 
             <div class="p-10 h-full flex flex-col">
-                <div class="mb-6 flex justify-between items-center text-slate-900 font-black font-black font-black">
+                <div class="mb-6 flex justify-between items-center text-slate-900 font-black">
                     <span id="q-type-label" class="bg-slate-900 text-white text-xs font-black px-6 py-2 rounded-full uppercase italic shadow-xl">MISSION INTEL</span>
                     <span id="q-index-label" class="text-slate-300 text-7xl font-black italic tracking-tighter">#01</span>
                 </div>
                 
-                <div id="q-content-text" class="font-black text-slate-900 tracking-tighter leading-tight italic uppercase mb-10 flex items-center justify-center text-center px-6 transition-all font-black font-black" style="flex: 0 0 120px;">
+                <div id="q-content-text" class="font-black text-slate-900 tracking-tighter leading-tight italic uppercase mb-10 flex items-center justify-center text-center px-6 transition-all" style="flex: 0 0 120px;">
                     LOADING Intel...
                 </div>
                 
@@ -222,26 +221,26 @@
                             <div id="writing-guide" class="writing-bg-text absolute inset-0 flex items-center justify-center text-[300px] text-slate-900/5 font-black"></div>
                             <canvas id="writing-canvas" width="500" height="500" class="absolute top-0 left-0 cursor-crosshair z-10 touch-none"></canvas>
                         </div>
-                        <div id="canvas-tools" class="flex flex-col gap-4 w-48 text-slate-900">
-                            <button onclick="setTool('pen')" id="tool-pen" class="w-full bg-indigo-600 text-white py-5 rounded-3xl shadow-lg border-4 border-indigo-300 flex flex-col items-center gap-1 font-black transition-all font-black"><i data-lucide="pen-tool"></i>黑筆</button>
-                            <button onclick="setTool('eraser')" id="tool-eraser" class="w-full bg-slate-200 text-slate-500 py-5 rounded-3xl flex flex-col items-center gap-1 font-black transition-all hover:bg-slate-300 font-black"><i data-lucide="eraser"></i>橡皮擦</button>
-                            <button onclick="undoAction()" class="w-full bg-slate-200 text-slate-500 py-5 rounded-3xl flex flex-col items-center gap-1 font-black transition-all hover:bg-slate-300 font-black"><i data-lucide="undo-2"></i>回上步</button>
-                            <button onclick="clearCanvas()" class="w-full bg-slate-200 text-slate-500 py-5 rounded-3xl flex flex-col items-center gap-1 font-black transition-all hover:bg-slate-300 font-black"><i data-lucide="trash-2"></i>清除</button>
+                        <div id="canvas-tools" class="flex flex-col gap-4 w-48 text-slate-900 font-black">
+                            <button onclick="setTool('pen')" id="tool-pen" class="w-full bg-indigo-600 text-white py-5 rounded-3xl shadow-lg border-4 border-indigo-300 flex flex-col items-center gap-1 font-black transition-all"><i data-lucide="pen-tool"></i>黑筆</button>
+                            <button onclick="setTool('eraser')" id="tool-eraser" class="w-full bg-slate-200 text-slate-500 py-5 rounded-3xl flex flex-col items-center gap-1 font-black transition-all hover:bg-slate-300"><i data-lucide="eraser"></i>橡皮擦</button>
+                            <button onclick="undoAction()" class="w-full bg-slate-200 text-slate-500 py-5 rounded-3xl flex flex-col items-center gap-1 font-black transition-all hover:bg-slate-300"><i data-lucide="undo-2"></i>回上步</button>
+                            <button onclick="clearCanvas()" class="w-full bg-slate-200 text-slate-500 py-5 rounded-3xl flex flex-col items-center gap-1 font-black transition-all hover:bg-slate-300"><i data-lucide="trash-2"></i>清除</button>
                             <div class="h-10"></div>
                             <button onclick="submitHandwriting()" class="w-full bg-emerald-600 text-white py-8 rounded-[2.5rem] text-4xl font-black shadow-2xl hover:bg-emerald-700 active:scale-95 transition-all italic tracking-widest uppercase font-black">Transmit</button>
                         </div>
                     </div>
 
                     <!-- 選擇介面 -->
-                    <div id="choice-area" class="hidden w-full max-w-4xl flex flex-col gap-8 font-black">
+                    <div id="choice-area" class="hidden w-full max-w-4xl flex flex-col gap-8">
                         <div id="options-container" class="grid grid-cols-1 gap-6 text-slate-900 font-black"></div>
                         <button id="multi-submit-btn" onclick="submitMultiAnswer()" class="hidden w-full bg-indigo-600 text-white py-10 rounded-[3.5rem] text-5xl font-black shadow-2xl italic uppercase tracking-tighter transition-all hover:bg-indigo-700 font-black">Confirm Authenticate</button>
                     </div>
 
                     <div id="wait-overlay" class="hidden absolute inset-0 bg-white/95 backdrop-blur-xl z-40 flex flex-col items-center justify-center animate-in fade-in">
                         <i data-lucide="radio" class="w-24 h-24 text-indigo-600 animate-bounce mb-8"></i>
-                        <h4 class="text-5xl font-black italic uppercase text-slate-900 tracking-tighter text-slate-900 font-black font-black">Transmitting Data...</h4>
-                        <p class="text-slate-400 font-bold text-2xl mt-4 italic font-black font-black">司令部審核中，請待命</p>
+                        <h4 class="text-5xl font-black italic uppercase text-slate-900 tracking-tighter text-slate-900">Transmitting Data...</h4>
+                        <p class="text-slate-400 font-bold text-2xl mt-4 italic font-black">司令部審核中，請待命</p>
                     </div>
                 </div>
             </div>
@@ -254,18 +253,18 @@
         <div class="w-full max-w-[750px] relative">
             <svg id="board-svg-main" viewBox="0 0 550 550" class="w-full h-auto drop-shadow-[0_20px_80px_rgba(255,255,255,0.25)]"></svg>
         </div>
-        <p class="mt-12 text-slate-400 font-black italic text-2xl tracking-widest text-center uppercase font-black font-black">Choose an adjacent circle to expand</p>
+        <p class="mt-12 text-slate-400 font-black italic text-2xl tracking-widest text-center uppercase font-black">Choose an adjacent circle to expand</p>
     </div>
 
     <!-- 6. 頒獎台 -->
-    <div id="podium-screen" class="hidden full-screen-panel bg-slate-900/95 backdrop-blur-xl z-[200] flex flex-col items-center justify-center p-10 animate-in fade-in duration-1000 text-white font-black font-black font-black">
+    <div id="podium-screen" class="hidden full-screen-panel bg-slate-900/95 backdrop-blur-xl z-[200] flex flex-col items-center justify-center p-10 animate-in fade-in duration-1000 text-white font-black">
         <h2 class="text-6xl font-black italic uppercase mb-20 tracking-tighter text-center font-black">Battle Accomplished</h2>
         <div class="flex items-end gap-10 max-w-5xl w-full justify-center">
             <div class="flex flex-col items-center gap-8 text-slate-400"><div id="rank-2-name" class="text-3xl font-black italic uppercase truncate w-40 text-center font-black font-black">--</div><div class="podium-2 w-56 rounded-t-[4rem] flex items-center justify-center text-8xl font-black text-white shadow-2xl font-black">2</div></div>
             <div class="flex flex-col items-center gap-10 text-yellow-400"><div id="rank-1-name" class="text-6xl font-black italic uppercase truncate w-60 text-center drop-shadow-[0_0_30px_rgba(250,204,21,0.6)] font-black">--</div><div class="podium-1 w-64 rounded-t-[5rem] flex items-center justify-center text-9xl font-black text-white shadow-[0_-20px_70px_rgba(234,179,8,0.5)] font-black">1</div></div>
             <div class="flex flex-col items-center gap-8 text-amber-600"><div id="rank-3-name" class="text-2xl font-black italic uppercase truncate w-40 text-center font-black font-black font-black">--</div><div class="podium-3 w-48 rounded-t-[3rem] flex items-center justify-center text-5xl font-black text-white shadow-2xl font-black font-black font-black">3</div></div>
         </div>
-        <button onclick="location.reload()" class="mt-28 bg-white text-slate-900 px-20 py-6 rounded-full font-black text-3xl shadow-2xl hover:bg-slate-200 uppercase italic">Head back to Base</button>
+        <button onclick="location.reload()" class="mt-28 bg-white text-slate-900 px-20 py-6 rounded-full font-black text-3xl shadow-2xl hover:bg-slate-200">Return to Base</button>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/qrcode@1.4.4/build/qrcode.min.js"></script>
@@ -274,8 +273,8 @@
         import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, doc, setDoc, onSnapshot, updateDoc, arrayUnion, deleteDoc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // 強制穩定 ID - 版本 v3500 (最終戰略絕對同步版)
-        const STABLE_CHANNEL_ID = 'territory-war-stable-v3500-absolute';
+        // 強制穩定 ID - 版本 v4000 (終極通訊版)
+        const FINAL_STABLE_ID = 'territory-war-stable-v4000-ultimate';
         const firebaseConfig = { apiKey: "AIzaSyBBIi6sw-wUzp-Jxc3dXJhl5DZ3-6LMe-o", authDomain: "my-handwriting-tool.firebaseapp.com", projectId: "my-handwriting-tool", storageBucket: "my-handwriting-tool.firebasestorage.app", messagingSenderId: "649810632937", appId: "1:649810632937:web:085f7e5c8f5290d6da9078", measurementId: "G-12B4P0QCGH" };
 
         Object.assign(window, { switchRole, chooseHand, setTool, undoAction, addQuestionRow, handleTeacherInit, confirmStudentName, setPreGrade, finalSubmitGrade, submitMultiAnswer, submitHandwriting, clearCanvas, copyJoinLink, toggleTargetNum, toggleOption, navigateQuestion, pushSyncQuestion, kickStudent, closeBattlefield });
@@ -294,16 +293,17 @@
                 await signInAnonymously(auth);
                 onAuthStateChanged(auth, (u) => {
                     user = u; if(!user) return;
-                    onSnapshot(doc(db, 'artifacts', STABLE_CHANNEL_ID, 'public', 'data', 'gameSession', 'main'), (ds) => {
+                    onSnapshot(doc(db, 'artifacts', FINAL_STABLE_ID, 'public', 'data', 'gameSession', 'main'), (ds) => {
                         if(ds.exists()) syncUI(ds.data());
-                        else { if(role === 'teacher') setDoc(doc(db, 'artifacts', STABLE_CHANNEL_ID, 'public', 'data', 'gameSession', 'main'), { status: 'lobby', lobbyPlayers: [], lastUpdate: Date.now() }); }
+                        else { if(role === 'teacher') setDoc(doc(db, 'artifacts', FINAL_STABLE_ID, 'public', 'data', 'gameSession', 'main'), { status: 'lobby', lobbyPlayers: [], lastUpdate: Date.now() }); }
                     }, (err) => console.error("Sync Error:", err));
                 });
             } catch (err) { console.error("Firebase Error:", err); }
         })();
 
         async function switchRole(r) {
-            role = r; document.getElementById('entry-screen').classList.add('hidden');
+            role = r; 
+            document.getElementById('entry-screen').classList.add('hidden');
             if(role === 'teacher') {
                 document.getElementById('teacher-setup-screen').classList.remove('hidden');
                 QRCode.toCanvas(qrCanvas, window.location.href, { width: 250, margin: 1 });
@@ -311,8 +311,10 @@
                 addQuestionRow('hand', '戰:請寫出挑戰之戰的戰字');
                 addQuestionRow('choice', '哪一個是台灣第一高峰？', '玉山,雪山,大霸尖山', '玉山');
                 addQuestionRow('boolean', '我們正在進行領地爭奪戰嗎？', '', '是');
-                // 強制初始化頻道
-                await setDoc(doc(db, 'artifacts', STABLE_CHANNEL_ID, 'public', 'data', 'gameSession', 'main'), { status: 'lobby', lobbyPlayers: [], lastUpdate: Date.now() });
+                // 教師進入時，先抓現有名單，避免 overwrite 剛連進來的學生
+                const ref = doc(db, 'artifacts', FINAL_STABLE_ID, 'public', 'data', 'gameSession', 'main');
+                const snap = await getDoc(ref);
+                if(!snap.exists()) await setDoc(ref, { status: 'lobby', lobbyPlayers: [], lastUpdate: Date.now() });
             } else { document.getElementById('player-select-screen').classList.remove('hidden'); }
             lucide.createIcons();
         }
@@ -322,9 +324,9 @@
             const name = ni.value.trim();
             if(!name) return;
             currentPlayerId = user.uid;
-            const ref = doc(db, 'artifacts', STABLE_CHANNEL_ID, 'public', 'data', 'gameSession', 'main');
+            const ref = doc(db, 'artifacts', FINAL_STABLE_ID, 'public', 'data', 'gameSession', 'main');
             
-            // 暴力寫入報到：解決點擊沒反應問題
+            // 暴力寫入報到：確保 100% 寫入
             const snap = await getDoc(ref);
             if(!snap.exists()) {
                 await setDoc(ref, { status: 'lobby', lobbyPlayers: [{ id: currentPlayerId, name }], lastUpdate: Date.now() });
@@ -340,22 +342,22 @@
         async function kickStudent(uid) {
             const newList = (gameState.lobbyPlayers || []).filter(p => p.id !== uid);
             const newFinalList = (gameState.players || []).filter(p => p.id !== uid);
-            await updateDoc(doc(db, 'artifacts', STABLE_CHANNEL_ID, 'public', 'data', 'gameSession', 'main'), { 
+            await updateDoc(doc(db, 'artifacts', FINAL_STABLE_ID, 'public', 'data', 'gameSession', 'main'), { 
                 lobbyPlayers: newList, players: newFinalList, lastUpdate: Date.now() 
             });
         }
 
         async function closeBattlefield() {
-            await updateDoc(doc(db, 'artifacts', STABLE_CHANNEL_ID, 'public', 'data', 'gameSession', 'main'), { status: 'closed', lastUpdate: Date.now() });
+            await updateDoc(doc(db, 'artifacts', FINAL_STABLE_ID, 'public', 'data', 'gameSession', 'main'), { status: 'closed', lastUpdate: Date.now() });
             setTimeout(async () => {
-                await deleteDoc(doc(db, 'artifacts', STABLE_CHANNEL_ID, 'public', 'data', 'gameSession', 'main'));
+                await deleteDoc(doc(db, 'artifacts', FINAL_STABLE_ID, 'public', 'data', 'gameSession', 'main'));
                 location.reload();
             }, 1000);
         }
 
         function toggleTargetNum() {
             const mode = document.getElementById('t-game-mode').value;
-            document.getElementById('target-label').innerText = mode === 'time' ? '挑戰時間 (分鐘)' : '設定目標';
+            document.getElementById('target-label').innerText = mode === 'time' ? '挑戰時間 (分鐘)' : '目標量';
         }
 
         function chooseHand(h) {
@@ -385,8 +387,8 @@
                 qs.push(qd);
             });
             const ps = gameState.lobbyPlayers.map((lp, i) => ({ id: lp.id, name: lp.name, colorClass: `p-${(i%8)+1}-color`, bgClass: `p-${(i%8)+1}-bg`, score: 0 }));
-            // 強制原子化寫入數據包
-            await setDoc(doc(db, 'artifacts', STABLE_CHANNEL_ID, 'public', 'data', 'gameSession', 'main'), {
+            // 一次性強硬原子化寫入數據包，避免資料斷層
+            await setDoc(doc(db, 'artifacts', FINAL_STABLE_ID, 'public', 'data', 'gameSession', 'main'), {
                 config: { playerCount: ps.length, mode: document.getElementById('t-game-mode').value, target: parseInt(document.getElementById('t-target-num').value), battleMode: document.getElementById('t-battle-mode').value },
                 questions: qs, players: ps, cells: generateCells(ps.length, qs.length, ps), status: 'playing', forcedQIdx: 0, startTime: Date.now(), lastUpdate: Date.now(), lobbyPlayers: gameState.lobbyPlayers
             });
@@ -394,14 +396,16 @@
 
         function navigateQuestion(dir) { const total = gameState.questions?.length; if(!total) return; teacherPreviewIdx = (teacherPreviewIdx + dir + total) % total; updateTeacherPreview(); }
         function updateTeacherPreview() { const q = gameState.questions[teacherPreviewIdx]; if(!q) return; document.getElementById('t-q-idx-label').innerText = `預覽題目 #${(teacherPreviewIdx + 1).toString().padStart(2, '0')}`; document.getElementById('t-q-preview-text').innerText = q.content; }
-        async function pushSyncQuestion() { await updateDoc(doc(db, 'artifacts', STABLE_CHANNEL_ID, 'public', 'data', 'gameSession', 'main'), { forcedQIdx: teacherPreviewIdx, lastUpdate: Date.now() }); }
+        async function pushSyncQuestion() { await updateDoc(doc(db, 'artifacts', FINAL_STABLE_ID, 'public', 'data', 'gameSession', 'main'), { forcedQIdx: teacherPreviewIdx, lastUpdate: Date.now() }); }
 
         function syncUI(data) {
+            // 如果偵測到戰場關閉指令，全體強制登出
             if(data.status === 'closed') { location.reload(); return; }
             if(role === null) return; 
 
             gameState = data;
             const ps_lobby = data.lobbyPlayers || []; 
+            // 如果自己被踢了， reload
             if(role === 'student' && currentPlayerId && !ps_lobby.some(p => p.id === currentPlayerId)) { location.reload(); return; }
 
             if(role === 'teacher') {
@@ -411,10 +415,10 @@
                 document.getElementById('teacher-lobby-list').innerHTML = html;
                 document.getElementById('t-battle-roster').innerHTML = html;
                 
-                // 強制按鈕亮起
+                // 強制亮起按鈕邏輯
                 const btn = document.getElementById('start-battle-btn');
-                btn.disabled = ps_lobby.length < 1;
-                btn.classList.toggle('opacity-20', ps_lobby.length < 1);
+                if(ps_lobby.length >= 1) { btn.disabled = false; btn.classList.remove('opacity-20'); }
+                else { btn.disabled = true; btn.classList.add('opacity-20'); }
                 lucide.createIcons();
             }
             if(data.status === 'playing') {
@@ -453,6 +457,7 @@
                     const res = data.lastGradeResult; if(res && res.studentId === currentPlayerId && (!window._lastId || window._lastId !== res.timestamp)) { window._lastId = res.timestamp; handleGradingResult(res.isCorrect); }
                 }
             }
+            if(data.status === 'finished') { showPodium(data.players || []); }
         }
 
         function renderBoard(data) {
@@ -478,7 +483,7 @@
             if(!canAttack) return;
             const cell = gameState.cells.find(c => c.id === cid), mc = gameState.cells.filter(c => c.owner === currentPlayerId); 
             if(cell.owner === currentPlayerId || !mc.some(m => Math.hypot(m.x-cell.x, m.y-cell.y) < 85)) return;
-            cell.owner = currentPlayerId; await updateDoc(doc(db, 'artifacts', STABLE_CHANNEL_ID, 'public', 'data', 'gameSession', 'main'), { cells: gameState.cells });
+            cell.owner = currentPlayerId; await updateDoc(doc(db, 'artifacts', FINAL_STABLE_ID, 'public', 'data', 'gameSession', 'main'), { cells: gameState.cells });
             canAttack = false; document.getElementById('attack-modal').classList.add('hidden');
             if(gameState.config.battleMode === 'self') { currentQIdx++; startStudentTurn(); }
             checkWinCondition();
@@ -495,7 +500,7 @@
             if(q.type === 'hand') { document.getElementById('handwriting-area').classList.remove('hidden'); document.getElementById('writing-guide').innerText = q.answer; initCanvas(); }
             else {
                 document.getElementById('choice-area').classList.remove('hidden'); const opts = q.type === 'boolean' ? ['對', '錯'] : q.options;
-                document.getElementById('options-container').innerHTML = opts.map(o => `<button onclick="toggleOption('${o}')" id="opt-${o}" class="bg-white border-4 border-slate-100 p-6 rounded-3xl font-black text-2xl text-left hover:bg-slate-50 flex items-center justify-between shadow-sm transition-all text-slate-900 font-black">${o} <div class="w-8 h-8 rounded-full border-4 border-slate-100 flex items-center justify-center shadow-inner"><div id="check-${o}" class="w-5 h-5 rounded-full bg-indigo-600 hidden"></div></div></button>`).join('');
+                document.getElementById('options-container').innerHTML = opts.map(o => `<button onclick="toggleOption('${o}')" id="opt-${o}" class="bg-white border-4 border-slate-100 p-6 rounded-3xl font-black text-2xl text-left hover:bg-slate-50 flex items-center justify-between shadow-sm transition-all text-slate-900 font-black font-black">${o} <div class="w-8 h-8 rounded-full border-4 border-slate-100 flex items-center justify-center shadow-inner"><div id="check-${o}" class="w-5 h-5 rounded-full bg-indigo-600 hidden"></div></div></button>`).join('');
                 document.getElementById('multi-submit-btn').classList.toggle('hidden', !q.isMulti);
             }
         }
@@ -517,7 +522,7 @@
         async function submitHandwriting() {
             const c = document.getElementById('writing-canvas'), img = c.toDataURL();
             document.getElementById('wait-overlay').classList.remove('hidden');
-            await updateDoc(doc(db, 'artifacts', STABLE_CHANNEL_ID, 'public', 'data', 'gameSession', 'main'), { gradingQueue: arrayUnion({ studentId: currentPlayerId, studentName: miName(), type:'hand', answerImg: img, timestamp: Date.now() }) });
+            await updateDoc(doc(db, 'artifacts', FINAL_STABLE_ID, 'public', 'data', 'gameSession', 'main'), { gradingQueue: arrayUnion({ studentId: currentPlayerId, studentName: miName(), type:'hand', answerImg: img, timestamp: Date.now() }) });
         }
         function miName() { return (gameState.players || []).find(p=>p.id===currentPlayerId)?.name || "勇者"; }
 
@@ -530,7 +535,7 @@
         async function finalSubmitGrade() {
             if(preGradeValue === null || !gameState.gradingQueue.length) return;
             const t = gameState.gradingQueue[0], ups = gameState.players.map(p => { if(p.id === t.studentId && preGradeValue) p.score += 1; return p; });
-            await updateDoc(doc(db, 'artifacts', STABLE_CHANNEL_ID, 'public', 'data', 'gameSession', 'main'), { players: ups, gradingQueue: gameState.gradingQueue.slice(1), lastGradeResult: { studentId: t.studentId, isCorrect: preGradeValue, timestamp: Date.now() } });
+            await updateDoc(doc(db, 'artifacts', FINAL_STABLE_ID, 'public', 'data', 'gameSession', 'main'), { players: ups, gradingQueue: gameState.gradingQueue.slice(1), lastGradeResult: { studentId: t.studentId, isCorrect: preGradeValue, timestamp: Date.now() } });
             document.getElementById('confirm-grade-btn').classList.add('hidden');
         }
 
@@ -540,7 +545,7 @@
             if(gameState.config.mode === 'target_count' && me?.score >= gameState.config.target) win = true;
             if(gameState.config.mode === 'complete_all' && me?.score >= gameState.questions.length) win = true;
             if(win) {
-                await updateDoc(doc(db, 'artifacts', STABLE_CHANNEL_ID, 'public', 'data', 'gameSession', 'main'), { status: 'finished' });
+                await updateDoc(doc(db, 'artifacts', FINAL_STABLE_ID, 'public', 'data', 'gameSession', 'main'), { status: 'finished' });
                 showPodium(gameState.players);
             }
         }
@@ -563,7 +568,7 @@
         function setTool(t) { currentTool = t; document.getElementById('tool-pen').className = t==='pen' ? 'w-full bg-indigo-600 text-white py-5 rounded-3xl font-black shadow-lg border-4 border-indigo-300' : 'w-full bg-slate-200 text-slate-500 py-5 rounded-3xl font-black'; document.getElementById('tool-eraser').className = t==='eraser' ? 'w-full bg-indigo-600 text-white py-5 rounded-3xl font-black shadow-lg border-4 border-indigo-300' : 'w-full bg-slate-200 text-slate-500 py-5 rounded-3xl font-black'; }
         function clearCanvas() { const c = document.getElementById('writing-canvas'), ctx = c.getContext('2d'); ctx.clearRect(0,0,500,500); saveHistory(); }
         function copyJoinLink() { const el = document.createElement('textarea'); el.value = window.location.href; document.body.appendChild(el); el.select(); document.execCommand('copy'); document.body.removeChild(el); showMsg("網址已複製!", "success"); }
-        function showMsg(txt, type) { const el = document.createElement('div'); el.className = `fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 px-10 py-5 rounded-2xl text-white font-black shadow-2xl z-[300] text-xl uppercase ${type==='error'?'bg-rose-600':'bg-emerald-600'}`; el.innerText = txt; document.body.appendChild(el); setTimeout(() => { el.style.opacity = '0'; setTimeout(()=>el.remove(), 500); }, 1500); }
+        function showMsg(txt, type) { const el = document.createElement('div'); el.className = `fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 px-10 py-5 rounded-2xl text-white font-black shadow-2xl z-[300] text-xl uppercase ${type==='error'?'bg-rose-600':'bg-emerald-600'}`; el.innerText = txt; document.body.appendChild(el); setTimeout(() => { el.style.opacity = '0'; setTimeout(()=>el.remove(), 500); }, 1000); }
 
         function showPodium(players) { const sorted = [...players].sort((a,b) => b.score - a.score); document.getElementById('rank-1-name').innerText = sorted[0]?.name || '--'; document.getElementById('rank-2-name').innerText = sorted[1]?.name || '--'; document.getElementById('rank-3-name').innerText = sorted[2]?.name || '--'; document.getElementById('game-screen').classList.add('hidden'); document.getElementById('podium-screen').classList.remove('hidden'); }
 
