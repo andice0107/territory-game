@@ -105,6 +105,7 @@
             <h2 class="text-6xl font-black italic uppercase">作戰暫停</h2>
         </div>
 
+        <!-- 側邊欄 -->
         <div id="sidebar-info" class="w-[320px] bg-white border-r-2 border-slate-200 p-6 flex flex-col gap-6 shadow-xl z-20 overflow-y-auto custom-scrollbar transition-all text-slate-900 font-black">
             <div id="student-info-panel" class="bg-slate-900 p-5 rounded-[2rem] text-white shadow-md">
                 <div class="flex items-center gap-4">
@@ -116,6 +117,7 @@
                 </div>
             </div>
 
+            <!-- 教師控制台 -->
             <div id="teacher-sidebar-tools" class="hidden space-y-4">
                 <div class="bg-indigo-900 p-4 rounded-3xl border-2 border-indigo-100 text-white shadow-2xl">
                     <h4 class="text-[10px] font-black text-indigo-300 uppercase italic mb-2">任務導航</h4>
@@ -129,6 +131,7 @@
                 <button id="pause-btn" onclick="window.togglePause()" class="w-full bg-rose-600 text-white py-4 rounded-2xl font-black text-sm italic shadow-lg">暫停全班作答</button>
             </div>
 
+            <!-- 領地圖 -->
             <div class="flex-1 bg-white/50 rounded-[2.5rem] p-4 flex flex-col items-center justify-center border-2 border-white shadow-inner relative overflow-hidden">
                 <h4 class="absolute top-4 w-full text-center text-[10px] font-black text-slate-400 uppercase italic">戰略圖預覽</h4>
                 <div class="w-full max-w-[200px]">
@@ -138,8 +141,10 @@
             </div>
         </div>
 
+        <!-- 主區域 -->
         <div id="main-canvas-area" class="flex-1 flex flex-col bg-slate-100 relative p-0 m-0 overflow-hidden">
             
+            <!-- 教師監控牆 -->
             <div id="teacher-monitoring-wall" class="hidden absolute inset-0 z-40 p-8 overflow-y-auto custom-scrollbar flex flex-col bg-slate-100 text-slate-900">
                 <div class="flex justify-between items-center mb-6">
                     <h3 class="text-4xl font-black italic uppercase">即時監控牆</h3>
@@ -151,6 +156,7 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="monitor-grid"></div>
             </div>
 
+            <!-- 學生答題區 -->
             <div id="student-answer-area" class="h-full flex flex-col transition-all overflow-hidden p-0 m-0 relative">
                 <div class="px-10 pt-6 flex justify-between items-start text-slate-900">
                     <div class="flex flex-col gap-2">
@@ -162,6 +168,7 @@
                 
                 <div id="q-content-text" class="font-black text-slate-900 italic uppercase mb-4 flex items-center justify-center text-center text-5xl px-10 min-h-[100px]">正在通訊同步...</div>
                 
+                <!-- 手寫區域 -->
                 <div id="handwriting-area" class="hidden absolute inset-0 pt-[250px] pointer-events-none flex items-center">
                     <div id="canvas-tools" class="flex flex-col gap-2 w-44 px-4 pointer-events-auto flex-shrink-0 z-30 text-slate-900">
                         <button onclick="window.setTool('pen')" id="tool-pen" class="w-full bg-indigo-600 text-white py-5 rounded-3xl border-4 border-indigo-300 font-black shadow-lg flex flex-col items-center active-tool"><i data-lucide="pen-tool" class="mb-1"></i>黑筆</button>
@@ -175,6 +182,7 @@
                         <button onclick="window.submitHandwriting()" class="w-full bg-emerald-600 text-white py-8 rounded-[2.5rem] text-4xl font-black shadow-2xl mt-4 italic uppercase">傳送</button>
                     </div>
 
+                    <!-- 田字格容器 -->
                     <div id="canvas-container" class="tian-zi-ge w-[500px] h-[500px] shadow-2xl relative overflow-hidden bg-white pointer-events-auto">
                         <div class="writing-guide-cross"></div>
                         <canvas id="writing-canvas" width="500" height="500" class="absolute top-0 left-0 cursor-crosshair z-10 touch-none"></canvas>
@@ -227,13 +235,14 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        // CORRECTED: arrayUnion is in firebase-firestore.js
         import { getFirestore, doc, setDoc, onSnapshot, updateDoc, arrayUnion, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         const firebaseConfig = { apiKey: "AIzaSyBBIi6sw-wUzp-Jxc3dXJhl5DZ3-6LMe-o", authDomain: "my-handwriting-tool.firebaseapp.com", projectId: "my-handwriting-tool", storageBucket: "my-handwriting-tool.firebasestorage.app", messagingSenderId: "649810632937", appId: "1:649810632937:web:085f7e5c8f5290d6da9078" };
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
-        const SYNC_ID = 'TW-2026-FINAL-PHYSICAL-EDGE-FIX-V3';
+        const SYNC_ID = 'TW-2026-FINAL-PHYSICAL-EDGE-FIX-FINAL-v3';
 
         let role = null, user = null, gameState = null, currentPlayerId = null, handPref = 'right';
         let currentTool = 'pen', collabPenColor = '#ef4444', collabTargetId = null;
@@ -339,7 +348,6 @@
                     const answerArea = document.getElementById('student-answer-area');
                     
                     if(h === 'left') {
-                        // 左撇子：側邊欄置右，田字格物理性壓死螢幕左邊
                         gameScreen.style.flexDirection = 'row-reverse';
                         canvasBox.className = 'tian-zi-ge w-[500px] h-[500px] shadow-2xl bg-white edge-left';
                         toolBox.style.marginLeft = '510px'; 
@@ -347,7 +355,6 @@
                         answerArea.style.paddingLeft = '0'; 
                         answerArea.style.paddingRight = '40px';
                     } else {
-                        // 右撇子：側邊欄置左，田字格物理性壓死螢幕右邊
                         gameScreen.style.flexDirection = 'row';
                         canvasBox.className = 'tian-zi-ge w-[500px] h-[500px] shadow-2xl bg-white edge-right';
                         toolBox.style.marginRight = '510px';
@@ -420,7 +427,7 @@
                         <div class="bg-white p-4 rounded-[2rem] shadow-md border-4 ${p.locked ? 'monitor-card-locked' : 'border-transparent'} relative">
                             <div class="flex justify-between items-center mb-3">
                                 <div class="flex items-center gap-2 font-black">
-                                    <div class="w-4 h-4 rounded-full ${p.bgClass}"></div>
+                                    <div class="w-4 h-4 rounded-full ${p.bgClass || 'bg-indigo-500'}"></div>
                                     <span class="text-sm font-black">${p.name} ${p.locked ? '🔒' : ''}</span>
                                 </div>
                                 <div class="flex gap-1">
@@ -617,7 +624,7 @@
                         (gameState?.cells || []).forEach(c => { 
                             const cir = document.createElementNS("http://www.w3.org/2000/svg", "circle"); 
                             cir.setAttribute("cx", c.x); cir.setAttribute("cy", c.y); cir.setAttribute("r", "12"); 
-                            const ow = gameState.players.find(p=>p.id===c.owner); cir.setAttribute("fill", ow ? window.getHex(ow.colorClass) : "#cbd5e1"); 
+                            const ow = (gameState.players || []).find(p=>p.id===c.owner); cir.setAttribute("fill", ow ? window.getHex(ow.colorClass) : "#cbd5e1"); 
                             cir.classList.add('territory-cell'); svg.appendChild(cir); 
                         }); 
                     }); 
@@ -628,7 +635,7 @@
                 submitHandwriting: () => { canAttack = true; document.getElementById('attack-modal').classList.remove('hidden'); },
                 openFullMap: () => document.getElementById('attack-modal').classList.remove('hidden'),
                 isLocked: () => { const me = (gameState.players || []).find(p => p.id === currentPlayerId); return me?.locked || gameState?.paused; },
-                copyJoinLink: () => { const el = document.createElement('textarea'); el.value = window.location.href; document.body.appendChild(el); el.select(); document.execCommand('copy'); document.body.removeChild(el); alert("邀請連結已複製！"); }
+                copyJoinLink: () => { const el = document.createElement('textarea'); el.value = window.location.href; document.body.appendChild(el); el.select(); document.execCommand('copy'); document.body.removeChild(el); /* No alert used here */ }
             });
         };
 
