@@ -11,15 +11,15 @@
         body { font-family: 'Noto Sans TC', sans-serif; background-color: #f1f5f9; color: #1e293b; margin: 0; padding: 0; overflow: hidden; }
         .territory-cell { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer; stroke: #fff; stroke-width: 2px; }
         
-        /* 玩家與畫筆色彩 */
+        /* 玩家色彩 */
         .p-1-color { fill: #ff4d6d; } .p-2-color { fill: #3b82f6; } .p-3-color { fill: #10b981; } .p-4-color { fill: #f59e0b; }
         
         /* 核心田字格與縮放 */
-        .tian-zi-ge { position: relative; background-color: #fff; box-shadow: inset 0 0 0 6px #1e293b; border-radius: 4px; transition: width 0.2s, height 0.2s; transform-origin: top left; }
+        .tian-zi-ge { position: relative; background-color: #fff; box-shadow: inset 0 0 0 6px #1e293b; border-radius: 4px; transition: width 0.1s, height 0.1s; transform-origin: top left; }
         .writing-guide-cross { position: absolute; inset: 0; pointer-events: none; background-image: linear-gradient(to right, transparent 49.5%, #cbd5e1 50%, transparent 50.5%), linear-gradient(to bottom, transparent 49.5%, #cbd5e1 50%, transparent 50.5%); opacity: 0.8; }
         .writing-bg-text { font-family: "KaiTi", "標楷體", serif; color: rgba(0,0,0,0.1); pointer-events: none; user-select: none; display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; font-weight: 900; line-height: 1; }
 
-        /* 鎖定與禁用外觀 */
+        /* 鎖定與禁用 */
         .locked-tools { opacity: 0.4; pointer-events: none !important; filter: grayscale(1); }
         .active-tool { transform: scale(1.1); border-color: #4f46e5 !important; box-shadow: 0 0 20px rgba(79, 70, 229, 0.4); }
         .full-screen-panel { width: 100vw; height: 100vh; position: fixed; top: 0; left: 0; z-index: 50; }
@@ -101,7 +101,7 @@
                         <span class="font-black text-slate-900">右撇子</span>
                     </button>
                 </div>
-                <button onclick="window.confirmStudentName()" class="w-full bg-slate-900 text-white py-5 rounded-2xl font-black text-xl shadow-xl italic font-black">確認部署</button>
+                <button onclick="window.confirmStudentName()" class="w-full bg-slate-900 text-white py-5 rounded-2xl font-black text-xl shadow-xl italic">確認部署</button>
             </div>
             <div id="student-wait-hint" class="hidden py-12 space-y-6 text-slate-900">
                 <div class="w-20 h-20 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center mx-auto animate-bounce">
@@ -161,7 +161,6 @@
         </div>
 
         <div id="main-canvas-area" class="flex-1 flex flex-col bg-slate-100 relative">
-            
             <!-- 監控牆 (僅教師可見) -->
             <div id="teacher-monitoring-wall" class="hidden absolute inset-0 z-40 p-8 overflow-y-auto custom-scrollbar flex flex-col bg-slate-100">
                 <div class="flex justify-between items-center mb-6">
@@ -186,7 +185,7 @@
                 
                 <div id="q-content-text" class="font-black text-slate-900 italic uppercase mb-4 flex items-center justify-center text-center text-5xl px-10 min-h-[120px]">正在通訊同步...</div>
                 
-                <div class="flex-1 flex items-center justify-center relative p-0" id="interaction-root">
+                <div class="flex-1 flex items-center justify-center relative p-0 overflow-hidden" id="interaction-root">
                     <div id="handwriting-area" class="hidden w-full h-full flex items-center">
                         <div id="handwriting-sub-container" class="w-full h-full flex items-center px-0">
                             <!-- 工具欄 -->
@@ -221,7 +220,7 @@
         </div>
     </div>
 
-    <div id="collab-modal" class="hidden fixed inset-0 bg-slate-900/95 backdrop-blur-md z-[300] flex items-center justify-center p-8">
+    <div id="collab-modal" class="hidden full-screen-panel bg-slate-900/95 backdrop-blur-md z-[300] flex items-center justify-center p-8">
         <div class="w-full max-w-6xl flex gap-12 items-center">
             <div class="flex-1 relative">
                 <div id="collab-status-tag" class="absolute -top-12 left-0 bg-amber-500 text-white px-6 py-2 rounded-full text-xs font-black italic shadow-lg z-20">正在指導學員...</div>
@@ -239,7 +238,7 @@
                     <button onclick="window.setCollabPen('#ef4444')" id="c-pen-red" class="bg-rose-600 text-white p-6 rounded-2xl font-black text-2xl shadow-lg border-4 border-transparent active-tool">紅筆</button>
                     <button onclick="window.setCollabPen('#3b82f6')" id="c-pen-blue" class="bg-blue-600 text-white p-6 rounded-2xl font-black text-2xl shadow-lg border-4 border-transparent">藍筆</button>
                 </div>
-                <button onclick="window.setCollabPen('eraser')" id="c-tool-eraser" class="w-full bg-slate-200 text-slate-800 py-4 rounded-2xl font-black">橡皮擦</button>
+                <button onclick="window.setCollabPen('eraser')" id="c-tool-eraser" class="w-full bg-slate-200 text-slate-800 py-4 rounded-2xl font-black text-xl">橡皮擦</button>
                 <div class="grid grid-cols-2 gap-2">
                     <button onclick="window.undoCollab()" class="bg-slate-700 text-white py-3 rounded-xl text-xs font-black">返回上步</button>
                     <button onclick="window.clearCollabTeacherOnly()" class="bg-slate-700 text-white py-3 rounded-xl text-xs font-black">清除指導</button>
@@ -251,7 +250,7 @@
         </div>
     </div>
 
-    <div id="attack-modal" class="hidden fixed inset-0 bg-slate-900/95 backdrop-blur-xl z-[150] flex flex-col items-center justify-center p-10">
+    <div id="attack-modal" class="hidden full-screen-panel bg-slate-900/95 backdrop-blur-xl z-[150] flex flex-col items-center justify-center p-10">
         <h2 class="text-6xl text-white italic uppercase mb-12 text-center font-black">任務達成！奪取領地！</h2>
         <div class="w-full max-w-[750px] relative">
             <svg id="board-svg-main" viewBox="0 0 550 550" class="w-full h-auto drop-shadow-2xl"></svg>
@@ -289,7 +288,6 @@
                         document.getElementById('teacher-sidebar-tools').classList.remove('hidden');
                         QRCode.toCanvas(document.getElementById('qr-canvas'), window.location.href, { width: 250, margin: 1 });
                         
-                        // 注入預設題目
                         await setDoc(ref, { status: 'lobby', lobbyPlayers: [], players: [], paused: false, lastUpdate: Date.now(), showGuide: false, curQ: 0 }, { merge: true });
                         document.getElementById('question-list').innerHTML = ''; 
                         window.addQuestionRow('hand', '戰：請寫出挑戰之戰的戰字', '', '戰');
@@ -302,10 +300,12 @@
                     onSnapshot(ref, (ds) => {
                         if(ds.exists()) {
                             const data = ds.data();
-                            const prevStatus = gameState?.status;
+                            const oldStatus = gameState?.status;
                             gameState = data;
                             window.syncUI();
-                            if(data.status === 'playing' && prevStatus !== 'playing') {
+                            
+                            // 關鍵修正：只要狀態是 playing 且還沒進入遊戲畫面，就強制跳轉
+                            if(data.status === 'playing' && document.getElementById('game-screen').classList.contains('hidden')) {
                                 document.getElementById('teacher-setup-screen').classList.add('hidden');
                                 document.getElementById('player-select-screen').classList.add('hidden');
                                 document.getElementById('game-screen').classList.remove('hidden');
@@ -318,12 +318,11 @@
                 syncUI: () => {
                     if(!gameState) return;
                     
-                    // 暫停按鈕狀態切換
                     const pauseBtn = document.getElementById('pause-btn');
                     if (pauseBtn) {
                         if (gameState.paused) {
                             pauseBtn.innerText = "恢復作答";
-                            pauseBtn.className = "w-full bg-emerald-600 text-white py-4 rounded-2xl font-black text-sm italic shadow-lg animate-pulse";
+                            pauseBtn.className = "w-full bg-emerald-600 text-white py-4 rounded-2xl font-black text-sm italic shadow-lg";
                         } else {
                             pauseBtn.innerText = "暫停全班作答";
                             pauseBtn.className = "w-full bg-rose-600 text-white py-4 rounded-2xl font-black text-sm italic shadow-lg";
@@ -353,13 +352,8 @@
                             document.getElementById('my-name-display').innerText = me.name;
                             document.getElementById('game-progress').innerText = `分數: ${me.score || 0}`;
                             if(me.collabInk) window.drawRemoteInk(me.collabInk);
-                            else { const rcc = document.getElementById('remote-ink-canvas'); if(rcc) rcc.getContext('2d').clearRect(0,0,500,500); }
+                            else { const rcc = document.getElementById('remote-ink-canvas'); if(rcc) rcc.getContext('2d').clearRect(0,0,2000,2000); }
                             document.getElementById('writing-guide').classList.toggle('hidden', !gameState.showGuide);
-                            
-                            // 筆跡縮放同步：如果縮放改變，重繪畫布
-                            if (window.currentCanvasSize !== 500 * canvasScale) {
-                                window.redrawCanvasScaled();
-                            }
                         }
                     }
                     
@@ -368,7 +362,6 @@
                     
                     window.renderMapUI();
                     
-                    // 指導視窗狀態同步
                     if(collabTargetId) {
                         const target = gameState.players.find(p=>p.id===collabTargetId);
                         const lockBtn = document.getElementById('lock-student-btn');
@@ -377,12 +370,10 @@
                             lockBtn.innerText = "解鎖學員畫筆";
                             lockBtn.className = "w-full bg-emerald-600 text-white py-6 rounded-3xl font-black text-xl shadow-xl mt-4";
                             lockLabel.innerText = "畫筆已鎖定";
-                            lockLabel.className = "text-amber-500 font-bold uppercase mt-1 text-xs";
                         } else {
                             lockBtn.innerText = "鎖定學員畫筆";
                             lockBtn.className = "w-full bg-amber-600 text-white py-6 rounded-3xl font-black text-xl shadow-xl mt-4";
                             lockLabel.innerText = "畫筆已開放";
-                            lockLabel.className = "text-rose-400 font-bold uppercase mt-1 text-xs";
                         }
                     }
                 },
@@ -407,7 +398,7 @@
                     const c = document.getElementById('writing-canvas');
                     if(!c) return;
                     const ctx = c.getContext('2d');
-                    ctx.lineWidth = 14; ctx.lineCap = 'round'; ctx.strokeStyle = '#1e293b';
+                    ctx.lineWidth = 14 * canvasScale; ctx.lineCap = 'round'; ctx.strokeStyle = '#1e293b';
                     let dr = false;
                     const gxy = (e) => {
                         const r = c.getBoundingClientRect();
@@ -427,18 +418,15 @@
 
                 zoomCanvas: (delta) => {
                     if(gameState.paused) return;
-                    // 保存當前筆跡
                     const c = document.getElementById('writing-canvas');
                     const oldInk = c.toDataURL();
                     
                     canvasScale = Math.max(0.6, Math.min(1.6, canvasScale + delta));
                     const size = 500 * canvasScale;
-                    window.currentCanvasSize = size;
                     
                     document.getElementById('canvas-container').style.width = `${size}px`;
                     document.getElementById('canvas-container').style.height = `${size}px`;
                     
-                    // 調整畫布尺寸並重繪
                     c.width = size; c.height = size;
                     const tc = document.getElementById('remote-ink-canvas');
                     tc.width = size; tc.height = size;
@@ -448,29 +436,19 @@
                         const ctx = c.getContext('2d');
                         ctx.clearRect(0,0,size,size);
                         ctx.drawImage(img, 0,0,size,size);
-                        window.initCanvas(); // 重新綁定事件與粗細
+                        window.initCanvas();
                         window.syncInk(true);
                     };
                     img.src = oldInk;
                 },
 
-                syncInk: async (force = false) => {
-                    const now = Date.now();
-                    if(!force && now - lastSyncTime < 800) return;
-                    lastSyncTime = now;
-                    const c = document.getElementById('writing-canvas');
-                    const data = c.toDataURL('image/webp', 0.2);
-                    const ups = gameState.players.map(p => { if(p.id === currentPlayerId) p.ink = data; return p; });
-                    await updateDoc(doc(db, 'artifacts', SYNC_ID), { players: ups });
-                },
-
                 chooseHand: (h) => {
                     handPref = h;
                     const sidebar = document.getElementById('sidebar-info');
-                    const answerArea = document.getElementById('student-answer-area');
+                    const gameScreen = document.getElementById('game-screen');
                     const subContainer = document.getElementById('handwriting-sub-container');
                     const canvasOuter = document.getElementById('canvas-container-outer');
-                    const gameScreen = document.getElementById('game-screen');
+                    const answerArea = document.getElementById('student-answer-area');
 
                     if(h === 'left') {
                         // 左撇子：田字格絕對靠左邊緣，資訊區推到最右側
@@ -493,6 +471,16 @@
                     document.getElementById('hand-right-btn').classList.toggle('bg-indigo-50', h==='right');
                     document.getElementById('hand-left-btn').classList.toggle('border-indigo-500', h==='left');
                     document.getElementById('hand-right-btn').classList.toggle('border-indigo-500', h==='right');
+                },
+
+                syncInk: async (force = false) => {
+                    const now = Date.now();
+                    if(!force && now - lastSyncTime < 800) return;
+                    lastSyncTime = now;
+                    const c = document.getElementById('writing-canvas');
+                    const data = c.toDataURL('image/webp', 0.2);
+                    const ups = gameState.players.map(p => { if(p.id === currentPlayerId) p.ink = data; return p; });
+                    await updateDoc(doc(db, 'artifacts', SYNC_ID), { players: ups });
                 },
 
                 navigateQuestion: (dir) => {
@@ -535,8 +523,6 @@
                     collabPenColor = c; 
                     document.getElementById('c-pen-red').classList.toggle('active-tool', c==='#ef4444');
                     document.getElementById('c-pen-blue').classList.toggle('active-tool', c==='#3b82f6');
-                    document.getElementById('c-tool-eraser').classList.toggle('bg-indigo-600', c==='eraser');
-                    document.getElementById('c-tool-eraser').classList.toggle('text-white', c==='eraser');
                 },
 
                 clearStudentInkRemote: async () => {
@@ -595,8 +581,7 @@
                 setTool: (t) => { 
                     currentTool = t; 
                     document.getElementById('tool-pen').classList.toggle('active-tool', t==='pen');
-                    document.getElementById('tool-eraser').classList.toggle('bg-indigo-600', t==='eraser');
-                    document.getElementById('tool-eraser').classList.toggle('text-white', t==='eraser');
+                    document.getElementById('tool-eraser').classList.toggle('active-tool', t==='eraser');
                 },
                 clearCanvas: () => { document.getElementById('writing-canvas').getContext('2d').clearRect(0,0,2000,2000); window.syncInk(true); },
                 undoAction: () => {
