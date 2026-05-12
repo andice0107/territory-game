@@ -10,11 +10,13 @@
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&display=swap');
         body { font-family: 'Noto Sans TC', sans-serif; background-color: #f1f5f9; color: #1e293b; margin: 0; padding: 0; overflow: hidden; }
         
-        /* 田字格基礎樣式 */
         .tian-zi-ge { background-color: #fff; box-shadow: inset 0 0 0 6px #1e293b; border-radius: 4px; position: relative; flex-shrink: 0; transition: width 0.1s, height 0.1s; }
         .writing-guide-cross { position: absolute; inset: 0; pointer-events: none; background-image: linear-gradient(to right, transparent 49.5%, #cbd5e1 50%, transparent 50.5%), linear-gradient(to bottom, transparent 49.5%, #cbd5e1 50%, transparent 50.5%); opacity: 0.8; }
         
-        /* 鎖定與狀態樣式 */
+        /* 物理貼邊樣式 - 強制絕對定位 */
+        .edge-right { position: fixed !important; right: 0 !important; top: 50%; transform: translateY(-50%); z-index: 40; }
+        .edge-left { position: fixed !important; left: 0 !important; top: 50%; transform: translateY(-50%); z-index: 40; }
+
         .active-tool { border: 6px solid #4f46e5 !important; box-shadow: 0 0 25px rgba(79, 70, 229, 0.5); transform: scale(1.05); }
         .locked-tools { opacity: 0.4; pointer-events: none !important; filter: grayscale(1); }
         .monitor-card-locked { border: 6px solid #f59e0b !important; box-shadow: 0 0 30px rgba(245, 158, 11, 0.4); }
@@ -23,9 +25,7 @@
         .custom-scrollbar::-webkit-scrollbar { width: 5px; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
         
-        /* 地圖圓圈樣式 */
         .territory-cell { transition: all 0.3s ease; cursor: pointer; stroke: #fff; stroke-width: 2px; }
-        .territory-cell:hover { transform: scale(1.2); filter: brightness(1.1); }
     </style>
 </head>
 <body class="min-h-screen overflow-hidden bg-slate-50 font-black">
@@ -118,7 +118,6 @@
                 </div>
             </div>
 
-            <!-- 教師控制台 -->
             <div id="teacher-sidebar-tools" class="hidden space-y-4">
                 <div class="bg-indigo-900 p-4 rounded-3xl border-2 border-indigo-100 text-white">
                     <h4 class="text-[10px] text-indigo-300 uppercase italic mb-2">任務導航</h4>
@@ -156,7 +155,6 @@
             </div>
 
             <!-- 學生答題區 -->
-            <!-- CRITICAL: p-0 m-0 ensuring edge alignment -->
             <div id="student-answer-area" class="h-full flex flex-col transition-all overflow-hidden p-0 m-0 relative">
                 <div class="px-10 pt-6 flex justify-between items-start">
                     <div class="flex flex-col gap-2">
@@ -168,9 +166,7 @@
                 
                 <div id="q-content-text" class="font-black text-slate-900 italic uppercase mb-4 flex items-center justify-center text-center text-5xl px-10 min-h-[100px]">正在通訊同步...</div>
                 
-                <!-- 手寫區域 -->
                 <div id="handwriting-area" class="hidden flex-1 flex items-center p-0 m-0 relative">
-                    <!-- 工具欄：固定寬度 -->
                     <div id="canvas-tools" class="flex flex-col gap-2 w-44 px-4 z-30 flex-shrink-0">
                         <button onclick="window.setTool('pen')" id="tool-pen" class="w-full bg-indigo-600 text-white py-5 rounded-3xl border-4 border-indigo-300 font-black shadow-lg flex flex-col items-center active-tool"><i data-lucide="pen-tool" class="mb-1"></i>黑筆</button>
                         <button onclick="window.setTool('eraser')" id="tool-eraser" class="w-full bg-slate-200 text-slate-500 py-5 rounded-3xl font-black flex flex-col items-center"><i data-lucide="eraser" class="mb-1"></i>橡皮擦</button>
@@ -183,8 +179,8 @@
                         <button onclick="window.submitHandwriting()" class="w-full bg-emerald-600 text-white py-8 rounded-[2.5rem] text-4xl font-black shadow-2xl mt-4 italic uppercase">傳送</button>
                     </div>
 
-                    <!-- 田字格容器：使用 ml-auto 確保右撇子時絕對貼齊右邊邊緣 -->
-                    <div id="canvas-container" class="tian-zi-ge w-[500px] h-[500px] shadow-2xl relative overflow-hidden bg-white ml-auto">
+                    <!-- 田字格容器：將套用物理貼邊 Class -->
+                    <div id="canvas-container" class="tian-zi-ge w-[500px] h-[500px] shadow-2xl relative overflow-hidden bg-white">
                         <div class="writing-guide-cross"></div>
                         <canvas id="writing-canvas" width="500" height="500" class="absolute top-0 left-0 cursor-crosshair z-10 touch-none"></canvas>
                         <canvas id="remote-ink-canvas" width="500" height="500" class="absolute top-0 left-0 pointer-events-none z-20"></canvas>
@@ -217,11 +213,12 @@
                     <button onclick="window.undoCollab()" class="bg-slate-700 text-white py-3 rounded-xl text-xs font-black italic uppercase">返回上步</button>
                     <button onclick="window.clearCollabTeacherOnly()" class="bg-slate-700 text-white py-3 rounded-xl text-xs font-black italic uppercase">清除指導線</button>
                 </div>
-                <!-- REMOTE CLEAR BUTTON -->
-                <button onclick="window.clearStudentInkRemote()" class="w-full bg-slate-900 border-2 border-rose-500 text-rose-500 py-4 rounded-2xl font-black text-xs italic mt-4 uppercase">一鍵清除學員筆跡</button>
+                
+                <!-- 遠端清除按鈕 -->
+                <button onclick="window.clearStudentInkRemote()" class="w-full bg-rose-600 text-white py-4 rounded-2xl font-black text-xs italic mt-4 uppercase shadow-xl hover:bg-rose-500 transition-colors">一鍵清除學員筆跡</button>
                 
                 <button id="lock-student-btn" onclick="window.toggleStudentLock()" class="w-full bg-amber-600 text-white py-6 rounded-3xl font-black text-xl shadow-xl mt-4 italic uppercase">鎖定學員畫筆</button>
-                <button onclick="window.closeCollab()" class="w-full bg-rose-600 text-white py-6 rounded-3xl font-black text-xl shadow-xl italic uppercase">結束指導並解鎖</button>
+                <button onclick="window.closeCollab()" class="w-full bg-emerald-600 text-white py-6 rounded-3xl font-black text-xl shadow-xl italic uppercase">結束指導並解鎖</button>
             </div>
         </div>
     </div>
@@ -244,7 +241,7 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
-        const SYNC_ID = 'TW-2026-FINAL-PHYSICAL-EDGE-FIX-V5';
+        const SYNC_ID = 'TW-2026-FINAL-PHYSICAL-EDGE-FIX-V8';
 
         let role = null, user = null, gameState = null, currentPlayerId = null, handPref = 'right';
         let currentTool = 'pen', collabPenColor = '#ef4444', collabTargetId = null;
@@ -315,6 +312,12 @@
                     if(role === 'student' && currentPlayerId) {
                         const me = (gameState.players || []).find(p => p.id === currentPlayerId);
                         if(me) {
+                            // 修正：如果資料庫的 ink 是空的，但本地畫布有東西，代表老師剛剛按了遠端清空
+                            const canvas = document.getElementById('writing-canvas');
+                            if(me.ink === '' && undoStack.length > 1) {
+                                window.clearCanvas(false); // 僅清空本地畫布，不回傳
+                            }
+
                             const isLocked = me.locked || gameState.paused;
                             ['tool-pen', 'tool-eraser', 'tool-undo', 'tool-clear', 'zoom-plus', 'zoom-minus'].forEach(id => {
                                 const btn = document.getElementById(id); 
@@ -335,7 +338,7 @@
                     const pb = document.getElementById('pause-btn');
                     if(pb) { 
                         pb.innerText = gameState.paused ? "恢復全班作答" : "暫停全班作答"; 
-                        pb.className = gameState.paused ? "w-full bg-emerald-600 text-white py-4 rounded-2xl font-black shadow-lg italic" : "w-full bg-rose-600 text-white py-4 rounded-2xl font-black shadow-lg italic"; 
+                        pb.className = gameState.paused ? "w-full bg-emerald-600 text-white py-4 rounded-2xl font-black text-sm italic shadow-lg" : "w-full bg-rose-600 text-white py-4 rounded-2xl font-black text-sm italic shadow-lg"; 
                     }
                     document.getElementById('pause-overlay').classList.toggle('hidden', !gameState.paused);
                     window.renderMapUI();
@@ -347,17 +350,14 @@
                     const canvasBox = document.getElementById('canvas-container');
                     const toolBox = document.getElementById('canvas-tools');
                     
-                    // PHYSICALLY HITTING THE EDGE
                     if(h === 'left') {
-                        gameScreen.style.flexDirection = 'row-reverse'; // Sidebar to right
-                        canvasBox.classList.remove('ml-auto');
-                        canvasBox.classList.add('mr-auto'); // Push grid to left edge
-                        toolBox.style.order = "2"; // Move tools to the right of the grid
+                        gameScreen.style.flexDirection = 'row-reverse';
+                        canvasBox.className = 'tian-zi-ge edge-left shadow-2xl bg-white';
+                        toolBox.style.order = "2";
                     } else {
-                        gameScreen.style.flexDirection = 'row'; // Sidebar to left
-                        canvasBox.classList.remove('mr-auto');
-                        canvasBox.classList.add('ml-auto'); // Push grid to right edge
-                        toolBox.style.order = "1"; // Move tools to the left of the grid
+                        gameScreen.style.flexDirection = 'row';
+                        canvasBox.className = 'tian-zi-ge edge-right shadow-2xl bg-white';
+                        toolBox.style.order = "1";
                     }
                 },
 
@@ -366,7 +366,6 @@
                     const tc = document.getElementById('remote-ink-canvas');
                     const oldSize = c.width;
                     
-                    // 1. Capture current state as images
                     const inkImg = new Image(); inkImg.src = c.toDataURL();
                     const remoteImg = new Image(); remoteImg.src = tc.toDataURL();
 
@@ -374,20 +373,20 @@
                         canvasScale = Math.max(0.6, Math.min(1.6, canvasScale + delta));
                         const newSize = 500 * canvasScale;
                         
-                        document.getElementById('canvas-container').style.width = `${newSize}px`;
-                        document.getElementById('canvas-container').style.height = `${newSize}px`;
+                        const cb = document.getElementById('canvas-container');
+                        cb.style.width = `${newSize}px`;
+                        cb.style.height = `${newSize}px`;
                         
                         c.width = newSize; c.height = newSize; 
                         tc.width = newSize; tc.height = newSize;
                         
-                        // 2. Redraw ink scaled to new size
                         const ctx = c.getContext('2d');
                         ctx.drawImage(inkImg, 0, 0, oldSize, oldSize, 0, 0, newSize, newSize);
                         
                         const tctx = tc.getContext('2d');
                         tctx.drawImage(remoteImg, 0, 0, oldSize, oldSize, 0, 0, newSize, newSize);
                         
-                        window.initCanvas(true); // Re-initialize listeners but keep drawing
+                        window.initCanvas(true);
                     };
                 },
 
@@ -457,6 +456,18 @@
                     await updateDoc(doc(db, 'artifacts', SYNC_ID), { players: ups });
                 },
 
+                clearStudentInkRemote: async () => {
+                    if(!collabTargetId) return;
+                    const ups = gameState.players.map(p => { 
+                        if(p.id === collabTargetId) p.ink = ''; 
+                        return p; 
+                    });
+                    await updateDoc(doc(db, 'artifacts', SYNC_ID), { players: ups });
+                    // 為了即時性，如果是在指導模式，本地預覽圖也清掉
+                    const img = document.getElementById('collab-student-view');
+                    if(img) img.getContext('2d').clearRect(0,0,700,700);
+                },
+
                 openCollab: (sid, name) => { 
                     collabTargetId = sid; 
                     const me = gameState.players.find(p => p.id === sid);
@@ -470,7 +481,11 @@
 
                 updateCollabStudentView: () => {
                     const me = gameState.players.find(p => p.id === collabTargetId);
-                    if(!me || !me.ink) return;
+                    if(!me || !me.ink) {
+                        const c = document.getElementById('collab-student-view');
+                        if(c) c.getContext('2d').clearRect(0,0,700,700);
+                        return;
+                    }
                     const img = new Image();
                     img.onload = () => {
                         const c = document.getElementById('collab-student-view'), ctx = c.getContext('2d');
@@ -484,8 +499,6 @@
                     const newLock = !me.locked;
                     const ups = gameState.players.map(p => { if(p.id === collabTargetId) p.locked = newLock; return p; }); 
                     await updateDoc(doc(db, 'artifacts', SYNC_ID), { players: ups }); 
-                    document.getElementById('lock-student-btn').innerText = newLock ? "解除鎖定" : "鎖定學員畫筆";
-                    document.getElementById('collab-lock-info').innerText = newLock ? "狀態：畫筆已鎖定" : "狀態：畫筆開放中";
                 },
 
                 closeCollab: async () => { 
@@ -522,11 +535,6 @@
                     const data = document.getElementById('collab-canvas').toDataURL('image/webp', 0.2); 
                     const ups = gameState.players.map(p => { if(p.id === collabTargetId) p.collabInk = data; return p; }); 
                     await updateDoc(doc(db, 'artifacts', SYNC_ID), { players: ups }); 
-                },
-
-                clearStudentInkRemote: async () => {
-                    const ups = gameState.players.map(p => { if(p.id === collabTargetId) p.ink = ''; return p; });
-                    await updateDoc(doc(db, 'artifacts', SYNC_ID), { players: ups });
                 },
 
                 drawRemoteInk: (data) => { 
@@ -568,7 +576,7 @@
                     document.getElementById('q-content-text').innerText = q.content; 
                     document.getElementById('q-index-label').innerText = `#${(gameState.curQ+1).toString().padStart(2,'0')}`; 
                     document.getElementById('handwriting-area').classList.remove('hidden'); 
-                    window.clearCanvas(); 
+                    window.clearCanvas(true); 
                 },
 
                 setTool: (t) => { 
@@ -577,7 +585,13 @@
                     document.getElementById('tool-eraser').classList.toggle('active-tool', t==='eraser');
                 },
 
-                clearCanvas: () => { document.getElementById('writing-canvas').getContext('2d').clearRect(0,0,2000,2000); undoStack = []; window.syncInk(true); },
+                clearCanvas: (shouldSync = true) => { 
+                    const c = document.getElementById('writing-canvas');
+                    const ctx = c.getContext('2d');
+                    ctx.clearRect(0,0,c.width,c.height); 
+                    undoStack = [c.toDataURL()]; 
+                    if(shouldSync) window.syncInk(true); 
+                },
 
                 undoAction: () => {
                     if(undoStack.length <= 1) return;
