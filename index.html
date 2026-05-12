@@ -3,27 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>領地爭奪戰 PRO - 2026 最終指揮官版</title>
+    <title>領地爭奪戰 PRO - 2026 指揮官最終校正版</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&display=swap');
         body { font-family: 'Noto Sans TC', sans-serif; background-color: #f1f5f9; color: #1e293b; margin: 0; padding: 0; overflow: hidden; }
         
-        .edge-right { position: fixed !important; right: 0 !important; top: 50% !important; transform: translateY(-50%) !important; margin-right: 0 !important; z-index: 40; }
-        .edge-left { position: fixed !important; left: 0 !important; top: 50% !important; transform: translateY(-50%) !important; margin-left: 0 !important; z-index: 40; }
-        
-        .tian-zi-ge { background-color: #fff; box-shadow: inset 0 0 0 6px #1e293b; border-radius: 4px; transition: width 0.1s, height 0.1s; position: relative; }
+        /* 田字格基礎樣式 */
+        .tian-zi-ge { background-color: #fff; box-shadow: inset 0 0 0 6px #1e293b; border-radius: 4px; position: relative; flex-shrink: 0; transition: width 0.1s, height 0.1s; }
         .writing-guide-cross { position: absolute; inset: 0; pointer-events: none; background-image: linear-gradient(to right, transparent 49.5%, #cbd5e1 50%, transparent 50.5%), linear-gradient(to bottom, transparent 49.5%, #cbd5e1 50%, transparent 50.5%); opacity: 0.8; }
         
+        /* 鎖定與狀態樣式 */
         .active-tool { border: 6px solid #4f46e5 !important; box-shadow: 0 0 25px rgba(79, 70, 229, 0.5); transform: scale(1.05); }
         .locked-tools { opacity: 0.4; pointer-events: none !important; filter: grayscale(1); }
+        .monitor-card-locked { border: 6px solid #f59e0b !important; box-shadow: 0 0 30px rgba(245, 158, 11, 0.4); }
         
         .full-screen-panel { width: 100vw; height: 100vh; position: fixed; top: 0; left: 0; z-index: 50; }
         .custom-scrollbar::-webkit-scrollbar { width: 5px; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
         
-        .monitor-card-locked { border: 6px solid #f59e0b !important; box-shadow: 0 0 30px rgba(245, 158, 11, 0.4); }
+        /* 地圖圓圈樣式 */
+        .territory-cell { transition: all 0.3s ease; cursor: pointer; stroke: #fff; stroke-width: 2px; }
+        .territory-cell:hover { transform: scale(1.2); filter: brightness(1.1); }
     </style>
 </head>
 <body class="min-h-screen overflow-hidden bg-slate-50 font-black">
@@ -51,19 +53,19 @@
             <button onclick="location.reload()" class="text-slate-400 hover:text-rose-500"><i data-lucide="x-circle" class="w-8 h-8"></i></button>
         </header>
         <div class="flex-1 flex overflow-hidden">
-            <div class="w-[320px] bg-slate-50 border-r p-6 space-y-6 overflow-y-auto custom-scrollbar font-black text-slate-900">
-                <div class="bg-white p-4 rounded-3xl shadow-lg text-center border font-black">
-                    <div class="bg-white aspect-square rounded-xl flex items-center justify-center mb-4 border-2 border-dashed shadow-inner">
+            <div class="w-[320px] bg-slate-50 border-r p-6 space-y-6 overflow-y-auto custom-scrollbar">
+                <div class="bg-white p-4 rounded-3xl shadow-lg text-center border">
+                    <div class="bg-white aspect-square rounded-xl flex items-center justify-center mb-4 border-2 border-dashed">
                         <canvas id="qr-canvas" class="w-full h-full"></canvas>
                     </div>
                     <button onclick="window.copyJoinLink()" class="w-full py-2.5 bg-slate-900 text-white rounded-lg font-black text-sm italic">複製邀請連結</button>
                 </div>
             </div>
-            <div class="flex-1 p-8 flex flex-col overflow-hidden text-slate-900 font-black">
+            <div class="flex-1 p-8 flex flex-col overflow-hidden">
                 <h3 class="text-xl font-black italic mb-6 flex items-center gap-2"><i data-lucide="scroll-text" class="text-indigo-600"></i>任務配置清單</h3>
                 <div id="question-list" class="flex-1 space-y-3 overflow-y-auto pr-4 custom-scrollbar"></div>
             </div>
-            <div class="w-[280px] bg-slate-100 border-l p-6 overflow-y-auto custom-scrollbar font-black text-slate-900">
+            <div class="w-[280px] bg-slate-100 border-l p-6 overflow-y-auto custom-scrollbar">
                 <h3 class="font-black text-xs uppercase text-slate-400 mb-4 flex justify-between italic">勇者候命區 <span id="ready-count" class="text-indigo-600">0</span></h3>
                 <div id="teacher-lobby-list" class="space-y-3"></div>
             </div>
@@ -77,23 +79,23 @@
         <div class="max-w-md w-full bg-white p-10 rounded-[4rem] shadow-2xl text-center space-y-8 relative border-[12px] border-slate-800">
             <div id="student-entry-form" class="space-y-8">
                 <h2 class="text-4xl font-black italic uppercase text-slate-900">勇者登錄</h2>
-                <input type="text" id="user-name-input" maxlength="10" placeholder="您的戰鬥代號..." class="w-full border-b-4 border-slate-100 p-4 text-center text-3xl font-black outline-none focus:border-indigo-600 text-slate-900">
+                <input type="text" id="user-name-input" maxlength="10" placeholder="您的戰鬥代號..." class="w-full border-b-4 border-slate-100 p-4 text-center text-3xl font-black outline-none focus:border-indigo-600">
                 <div class="grid grid-cols-2 gap-4">
-                    <button onclick="window.chooseHand('left')" id="hand-left-btn" type="button" class="p-6 border-4 border-slate-100 rounded-3xl flex flex-col items-center gap-2 transition-all">
+                    <button onclick="window.chooseHand('left')" id="hand-left-btn" class="p-6 border-4 border-slate-100 rounded-3xl flex flex-col items-center gap-2 transition-all">
                         <i data-lucide="hand" class="w-12 h-12 -scale-x-100"></i>
-                        <span class="font-black text-slate-900">左撇子</span>
+                        <span class="font-black">左撇子</span>
                     </button>
-                    <button onclick="window.chooseHand('right')" id="hand-right-btn" type="button" class="p-6 border-4 border-indigo-500 bg-indigo-50 rounded-3xl flex flex-col items-center gap-2 transition-all">
+                    <button onclick="window.chooseHand('right')" id="hand-right-btn" class="p-6 border-4 border-indigo-500 bg-indigo-50 rounded-3xl flex flex-col items-center gap-2 transition-all">
                         <i data-lucide="hand" class="w-12 h-12 text-indigo-500"></i>
-                        <span class="font-black text-slate-900 font-black">右撇子</span>
+                        <span class="font-black">右撇子</span>
                     </button>
                 </div>
                 <button onclick="window.confirmStudentName()" class="w-full bg-slate-900 text-white py-5 rounded-2xl font-black text-xl shadow-xl italic uppercase">確認部署</button>
             </div>
-            <div id="student-wait-hint" class="hidden py-12 space-y-6 text-slate-900">
+            <div id="student-wait-hint" class="hidden py-12 space-y-6">
                 <div class="w-20 h-20 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center mx-auto animate-bounce"><i data-lucide="clock" class="w-10 h-10"></i></div>
                 <h2 class="text-3xl font-black italic">已成功就位</h2>
-                <p class="text-slate-400 font-black animate-pulse italic uppercase">等待指揮官下達作戰指令...</p>
+                <p class="text-slate-400 animate-pulse italic uppercase">等待指揮官下達作戰指令...</p>
             </div>
         </div>
     </div>
@@ -105,35 +107,33 @@
             <h2 class="text-6xl font-black italic uppercase">作戰暫停</h2>
         </div>
 
-        <!-- 側邊欄 -->
-        <div id="sidebar-info" class="w-[320px] bg-white border-r-2 border-slate-200 p-6 flex flex-col gap-6 shadow-xl z-20 overflow-y-auto custom-scrollbar transition-all text-slate-900 font-black">
+        <div id="sidebar-info" class="w-[320px] bg-white border-r-2 border-slate-200 p-6 flex flex-col gap-6 shadow-xl z-20 overflow-y-auto custom-scrollbar transition-all">
             <div id="student-info-panel" class="bg-slate-900 p-5 rounded-[2rem] text-white shadow-md">
                 <div class="flex items-center gap-4">
                     <div id="my-color-preview" class="w-14 h-14 rounded-full border-4 border-white/10 shadow-inner"></div>
                     <div class="flex-1">
                         <div id="my-name-display" class="text-xl font-black uppercase truncate italic">勇者</div>
-                        <div id="game-progress" class="text-xs text-indigo-400 font-black mt-1 uppercase italic">分數: 0</div>
+                        <div id="game-progress" class="text-xs text-indigo-400 mt-1 uppercase italic">分數: 0</div>
                     </div>
                 </div>
             </div>
 
             <!-- 教師控制台 -->
             <div id="teacher-sidebar-tools" class="hidden space-y-4">
-                <div class="bg-indigo-900 p-4 rounded-3xl border-2 border-indigo-100 text-white shadow-2xl">
-                    <h4 class="text-[10px] font-black text-indigo-300 uppercase italic mb-2">任務導航</h4>
-                    <div id="teacher-hud-q" class="text-sm font-black mb-4 bg-indigo-800 p-3 rounded-xl border border-indigo-700 italic min-h-[50px] leading-tight text-white">載入中...</div>
+                <div class="bg-indigo-900 p-4 rounded-3xl border-2 border-indigo-100 text-white">
+                    <h4 class="text-[10px] text-indigo-300 uppercase italic mb-2">任務導航</h4>
+                    <div id="teacher-hud-q" class="text-sm font-black mb-4 bg-indigo-800 p-3 rounded-xl border border-indigo-700 italic min-h-[50px] leading-tight">載入中...</div>
                     <div class="grid grid-cols-2 gap-2 mb-2">
-                        <button onclick="window.navigateQuestion(-1)" class="bg-white/10 hover:bg-white/20 py-2 rounded-lg text-xs font-black italic">上一個</button>
-                        <button onclick="window.navigateQuestion(1)" class="bg-white/10 hover:bg-white/20 py-2 rounded-lg text-xs font-black italic">下一個</button>
+                        <button onclick="window.navigateQuestion(-1)" class="bg-white/10 hover:bg-white/20 py-2 rounded-lg text-xs italic">上一題</button>
+                        <button onclick="window.navigateQuestion(1)" class="bg-white/10 hover:bg-white/20 py-2 rounded-lg text-xs italic">下一題</button>
                     </div>
-                    <button onclick="window.syncQuestionToAll()" class="w-full bg-indigo-500 hover:bg-indigo-400 text-white py-3 rounded-xl font-black text-xs italic shadow-md uppercase">同步到全體勇者</button>
+                    <button onclick="window.syncQuestionToAll()" class="w-full bg-indigo-500 hover:bg-indigo-400 text-white py-3 rounded-xl font-black text-xs italic uppercase">同步全體勇者</button>
                 </div>
-                <button id="pause-btn" onclick="window.togglePause()" class="w-full bg-rose-600 text-white py-4 rounded-2xl font-black text-sm italic shadow-lg">暫停全班作答</button>
+                <button id="pause-btn" onclick="window.togglePause()" class="w-full bg-rose-600 text-white py-4 rounded-2xl font-black text-sm italic">暫停全班作答</button>
             </div>
 
-            <!-- 領地圖 -->
             <div class="flex-1 bg-white/50 rounded-[2.5rem] p-4 flex flex-col items-center justify-center border-2 border-white shadow-inner relative overflow-hidden">
-                <h4 class="absolute top-4 w-full text-center text-[10px] font-black text-slate-400 uppercase italic">戰略圖預覽</h4>
+                <h4 class="absolute top-4 w-full text-center text-[10px] text-slate-400 uppercase italic">戰略圖預覽</h4>
                 <div class="w-full max-w-[200px]">
                     <svg id="board-svg-mini" viewBox="0 0 550 550" class="w-full h-auto drop-shadow-lg"></svg>
                 </div>
@@ -141,24 +141,24 @@
             </div>
         </div>
 
-        <!-- 主區域 -->
         <div id="main-canvas-area" class="flex-1 flex flex-col bg-slate-100 relative p-0 m-0 overflow-hidden">
             
             <!-- 教師監控牆 -->
-            <div id="teacher-monitoring-wall" class="hidden absolute inset-0 z-40 p-8 overflow-y-auto custom-scrollbar flex flex-col bg-slate-100 text-slate-900">
+            <div id="teacher-monitoring-wall" class="hidden absolute inset-0 z-40 p-8 overflow-y-auto custom-scrollbar flex flex-col bg-slate-100">
                 <div class="flex justify-between items-center mb-6">
                     <h3 class="text-4xl font-black italic uppercase">即時監控牆</h3>
                     <div class="flex gap-2">
-                        <button onclick="window.toggleAllMonitors(false)" class="bg-indigo-600 text-white px-6 py-2 rounded-full text-xs font-black shadow-md italic">顯示全體</button>
-                        <button onclick="window.toggleAllMonitors(true)" class="bg-slate-800 text-white px-6 py-2 rounded-full text-xs font-black shadow-md italic">遮蔽全體</button>
+                        <button onclick="window.toggleAllMonitors(false)" class="bg-indigo-600 text-white px-6 py-2 rounded-full text-xs font-black italic">顯示全體</button>
+                        <button onclick="window.toggleAllMonitors(true)" class="bg-slate-800 text-white px-6 py-2 rounded-full text-xs font-black italic">遮蔽全體</button>
                     </div>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="monitor-grid"></div>
             </div>
 
             <!-- 學生答題區 -->
+            <!-- CRITICAL: p-0 m-0 ensuring edge alignment -->
             <div id="student-answer-area" class="h-full flex flex-col transition-all overflow-hidden p-0 m-0 relative">
-                <div class="px-10 pt-6 flex justify-between items-start text-slate-900">
+                <div class="px-10 pt-6 flex justify-between items-start">
                     <div class="flex flex-col gap-2">
                         <span id="q-type-label" class="bg-slate-900 text-white text-[10px] font-black px-6 py-1.5 rounded-full uppercase italic shadow-lg w-max">MISSION INTEL</span>
                         <div id="player-identity-tag" class="text-3xl font-black italic text-indigo-600 uppercase">勇者代號：[載入中]</div>
@@ -169,8 +169,9 @@
                 <div id="q-content-text" class="font-black text-slate-900 italic uppercase mb-4 flex items-center justify-center text-center text-5xl px-10 min-h-[100px]">正在通訊同步...</div>
                 
                 <!-- 手寫區域 -->
-                <div id="handwriting-area" class="hidden absolute inset-0 pt-[250px] pointer-events-none flex items-center">
-                    <div id="canvas-tools" class="flex flex-col gap-2 w-44 px-4 pointer-events-auto flex-shrink-0 z-30 text-slate-900">
+                <div id="handwriting-area" class="hidden flex-1 flex items-center p-0 m-0 relative">
+                    <!-- 工具欄：固定寬度 -->
+                    <div id="canvas-tools" class="flex flex-col gap-2 w-44 px-4 z-30 flex-shrink-0">
                         <button onclick="window.setTool('pen')" id="tool-pen" class="w-full bg-indigo-600 text-white py-5 rounded-3xl border-4 border-indigo-300 font-black shadow-lg flex flex-col items-center active-tool"><i data-lucide="pen-tool" class="mb-1"></i>黑筆</button>
                         <button onclick="window.setTool('eraser')" id="tool-eraser" class="w-full bg-slate-200 text-slate-500 py-5 rounded-3xl font-black flex flex-col items-center"><i data-lucide="eraser" class="mb-1"></i>橡皮擦</button>
                         <button onclick="window.undoAction()" id="tool-undo" class="w-full bg-slate-200 text-slate-500 py-5 rounded-3xl font-black italic">返回上步</button>
@@ -182,8 +183,8 @@
                         <button onclick="window.submitHandwriting()" class="w-full bg-emerald-600 text-white py-8 rounded-[2.5rem] text-4xl font-black shadow-2xl mt-4 italic uppercase">傳送</button>
                     </div>
 
-                    <!-- 田字格容器 -->
-                    <div id="canvas-container" class="tian-zi-ge w-[500px] h-[500px] shadow-2xl relative overflow-hidden bg-white pointer-events-auto">
+                    <!-- 田字格容器：使用 ml-auto 確保右撇子時絕對貼齊右邊邊緣 -->
+                    <div id="canvas-container" class="tian-zi-ge w-[500px] h-[500px] shadow-2xl relative overflow-hidden bg-white ml-auto">
                         <div class="writing-guide-cross"></div>
                         <canvas id="writing-canvas" width="500" height="500" class="absolute top-0 left-0 cursor-crosshair z-10 touch-none"></canvas>
                         <canvas id="remote-ink-canvas" width="500" height="500" class="absolute top-0 left-0 pointer-events-none z-20"></canvas>
@@ -204,7 +205,7 @@
             </div>
             <div class="w-80 space-y-4 text-white">
                 <div class="mb-6">
-                    <h3 class="text-4xl font-black italic truncate uppercase" id="collab-name">指導中</h3>
+                    <h3 class="text-4xl font-black italic truncate uppercase" id="collab-name">勇者名稱</h3>
                     <p id="collab-lock-info" class="text-amber-400 font-bold uppercase mt-1 text-xs">狀態：畫筆開放中</p>
                 </div>
                 <div class="grid grid-cols-2 gap-4">
@@ -216,7 +217,9 @@
                     <button onclick="window.undoCollab()" class="bg-slate-700 text-white py-3 rounded-xl text-xs font-black italic uppercase">返回上步</button>
                     <button onclick="window.clearCollabTeacherOnly()" class="bg-slate-700 text-white py-3 rounded-xl text-xs font-black italic uppercase">清除指導線</button>
                 </div>
+                <!-- REMOTE CLEAR BUTTON -->
                 <button onclick="window.clearStudentInkRemote()" class="w-full bg-slate-900 border-2 border-rose-500 text-rose-500 py-4 rounded-2xl font-black text-xs italic mt-4 uppercase">一鍵清除學員筆跡</button>
+                
                 <button id="lock-student-btn" onclick="window.toggleStudentLock()" class="w-full bg-amber-600 text-white py-6 rounded-3xl font-black text-xl shadow-xl mt-4 italic uppercase">鎖定學員畫筆</button>
                 <button onclick="window.closeCollab()" class="w-full bg-rose-600 text-white py-6 rounded-3xl font-black text-xl shadow-xl italic uppercase">結束指導並解鎖</button>
             </div>
@@ -235,14 +238,13 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        // CORRECTED: arrayUnion is in firebase-firestore.js
         import { getFirestore, doc, setDoc, onSnapshot, updateDoc, arrayUnion, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         const firebaseConfig = { apiKey: "AIzaSyBBIi6sw-wUzp-Jxc3dXJhl5DZ3-6LMe-o", authDomain: "my-handwriting-tool.firebaseapp.com", projectId: "my-handwriting-tool", storageBucket: "my-handwriting-tool.firebasestorage.app", messagingSenderId: "649810632937", appId: "1:649810632937:web:085f7e5c8f5290d6da9078" };
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
-        const SYNC_ID = 'TW-2026-FINAL-PHYSICAL-EDGE-FIX-FINAL-v3';
+        const SYNC_ID = 'TW-2026-FINAL-PHYSICAL-EDGE-FIX-V5';
 
         let role = null, user = null, gameState = null, currentPlayerId = null, handPref = 'right';
         let currentTool = 'pen', collabPenColor = '#ef4444', collabTargetId = null;
@@ -342,29 +344,21 @@
                 chooseHand: (h) => {
                     handPref = h;
                     const gameScreen = document.getElementById('game-screen');
-                    const sidebar = document.getElementById('sidebar-info');
                     const canvasBox = document.getElementById('canvas-container');
                     const toolBox = document.getElementById('canvas-tools');
-                    const answerArea = document.getElementById('student-answer-area');
                     
+                    // PHYSICALLY HITTING THE EDGE
                     if(h === 'left') {
-                        gameScreen.style.flexDirection = 'row-reverse';
-                        canvasBox.className = 'tian-zi-ge w-[500px] h-[500px] shadow-2xl bg-white edge-left';
-                        toolBox.style.marginLeft = '510px'; 
-                        toolBox.style.marginRight = '0';
-                        answerArea.style.paddingLeft = '0'; 
-                        answerArea.style.paddingRight = '40px';
+                        gameScreen.style.flexDirection = 'row-reverse'; // Sidebar to right
+                        canvasBox.classList.remove('ml-auto');
+                        canvasBox.classList.add('mr-auto'); // Push grid to left edge
+                        toolBox.style.order = "2"; // Move tools to the right of the grid
                     } else {
-                        gameScreen.style.flexDirection = 'row';
-                        canvasBox.className = 'tian-zi-ge w-[500px] h-[500px] shadow-2xl bg-white edge-right';
-                        toolBox.style.marginRight = '510px';
-                        toolBox.style.marginLeft = 'auto';
-                        answerArea.style.paddingRight = '0';
-                        answerArea.style.paddingLeft = '40px';
+                        gameScreen.style.flexDirection = 'row'; // Sidebar to left
+                        canvasBox.classList.remove('mr-auto');
+                        canvasBox.classList.add('ml-auto'); // Push grid to right edge
+                        toolBox.style.order = "1"; // Move tools to the left of the grid
                     }
-                    
-                    document.getElementById('hand-left-btn').className = h === 'left' ? 'p-6 border-4 border-indigo-500 bg-indigo-50 rounded-3xl flex flex-col items-center gap-2 transition-all shadow-md' : 'p-6 border-4 border-slate-100 rounded-3xl flex flex-col items-center gap-2 transition-all';
-                    document.getElementById('hand-right-btn').className = h === 'right' ? 'p-6 border-4 border-indigo-500 bg-indigo-50 rounded-3xl flex flex-col items-center gap-2 transition-all shadow-md' : 'p-6 border-4 border-slate-100 rounded-3xl flex flex-col items-center gap-2 transition-all';
                 },
 
                 zoomCanvas: (delta) => {
@@ -372,33 +366,29 @@
                     const tc = document.getElementById('remote-ink-canvas');
                     const oldSize = c.width;
                     
-                    const tempCanvas = document.createElement('canvas');
-                    tempCanvas.width = oldSize; tempCanvas.height = oldSize;
-                    tempCanvas.getContext('2d').drawImage(c, 0, 0);
-                    
-                    const tempRemote = document.createElement('canvas');
-                    tempRemote.width = oldSize; tempRemote.height = oldSize;
-                    tempRemote.getContext('2d').drawImage(tc, 0, 0);
+                    // 1. Capture current state as images
+                    const inkImg = new Image(); inkImg.src = c.toDataURL();
+                    const remoteImg = new Image(); remoteImg.src = tc.toDataURL();
 
-                    canvasScale = Math.max(0.6, Math.min(1.6, canvasScale + delta));
-                    const newSize = 500 * canvasScale;
-                    
-                    document.getElementById('canvas-container').style.width = `${newSize}px`;
-                    document.getElementById('canvas-container').style.height = `${newSize}px`;
-                    
-                    c.width = newSize; c.height = newSize; 
-                    tc.width = newSize; tc.height = newSize;
-                    
-                    const ctx = c.getContext('2d');
-                    ctx.drawImage(tempCanvas, 0, 0, oldSize, oldSize, 0, 0, newSize, newSize);
-                    
-                    const tctx = tc.getContext('2d');
-                    tctx.drawImage(tempRemote, 0, 0, oldSize, oldSize, 0, 0, newSize, newSize);
-                    
-                    window.initCanvas(true); 
-                    const tbox = document.getElementById('canvas-tools');
-                    if(handPref === 'right') tbox.style.marginRight = `${newSize + 10}px`;
-                    else tbox.style.marginLeft = `${newSize + 10}px`;
+                    inkImg.onload = () => {
+                        canvasScale = Math.max(0.6, Math.min(1.6, canvasScale + delta));
+                        const newSize = 500 * canvasScale;
+                        
+                        document.getElementById('canvas-container').style.width = `${newSize}px`;
+                        document.getElementById('canvas-container').style.height = `${newSize}px`;
+                        
+                        c.width = newSize; c.height = newSize; 
+                        tc.width = newSize; tc.height = newSize;
+                        
+                        // 2. Redraw ink scaled to new size
+                        const ctx = c.getContext('2d');
+                        ctx.drawImage(inkImg, 0, 0, oldSize, oldSize, 0, 0, newSize, newSize);
+                        
+                        const tctx = tc.getContext('2d');
+                        tctx.drawImage(remoteImg, 0, 0, oldSize, oldSize, 0, 0, newSize, newSize);
+                        
+                        window.initCanvas(true); // Re-initialize listeners but keep drawing
+                    };
                 },
 
                 initCanvas: (isZoom = false) => {
@@ -424,7 +414,7 @@
                 renderMonitorWall: () => {
                     const grid = document.getElementById('monitor-grid');
                     grid.innerHTML = (gameState.players || []).map(p => `
-                        <div class="bg-white p-4 rounded-[2rem] shadow-md border-4 ${p.locked ? 'monitor-card-locked' : 'border-transparent'} relative">
+                        <div class="bg-white p-4 rounded-[2rem] shadow-md border-4 ${p.locked ? 'monitor-card-locked' : 'border-transparent'} relative transition-all">
                             <div class="flex justify-between items-center mb-3">
                                 <div class="flex items-center gap-2 font-black">
                                     <div class="w-4 h-4 rounded-full ${p.bgClass || 'bg-indigo-500'}"></div>
@@ -490,8 +480,12 @@
                 },
 
                 toggleStudentLock: async () => { 
-                    const ups = gameState.players.map(p => { if(p.id === collabTargetId) p.locked = !p.locked; return p; }); 
+                    const me = gameState.players.find(p => p.id === collabTargetId);
+                    const newLock = !me.locked;
+                    const ups = gameState.players.map(p => { if(p.id === collabTargetId) p.locked = newLock; return p; }); 
                     await updateDoc(doc(db, 'artifacts', SYNC_ID), { players: ups }); 
+                    document.getElementById('lock-student-btn').innerText = newLock ? "解除鎖定" : "鎖定學員畫筆";
+                    document.getElementById('collab-lock-info').innerText = newLock ? "狀態：畫筆已鎖定" : "狀態：畫筆開放中";
                 },
 
                 closeCollab: async () => { 
@@ -635,7 +629,7 @@
                 submitHandwriting: () => { canAttack = true; document.getElementById('attack-modal').classList.remove('hidden'); },
                 openFullMap: () => document.getElementById('attack-modal').classList.remove('hidden'),
                 isLocked: () => { const me = (gameState.players || []).find(p => p.id === currentPlayerId); return me?.locked || gameState?.paused; },
-                copyJoinLink: () => { const el = document.createElement('textarea'); el.value = window.location.href; document.body.appendChild(el); el.select(); document.execCommand('copy'); document.body.removeChild(el); /* No alert used here */ }
+                copyJoinLink: () => { const el = document.createElement('textarea'); el.value = window.location.href; document.body.appendChild(el); el.select(); document.execCommand('copy'); document.body.removeChild(el); }
             });
         };
 
