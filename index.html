@@ -10,12 +10,13 @@
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&display=swap');
         body { font-family: 'Noto Sans TC', sans-serif; background-color: #f1f5f9; color: #1e293b; margin: 0; padding: 0; overflow: hidden; }
         
-        .tian-zi-ge { background-color: #fff; box-shadow: inset 0 0 0 6px #1e293b; border-radius: 4px; position: relative; flex-shrink: 0; transition: width 0.1s, height 0.1s; }
+        /* 田字格基礎樣式 */
+        .tian-zi-ge { background-color: #fff; box-shadow: inset 0 0 0 6px #1e293b; border-radius: 4px; position: relative; flex-shrink: 0; transition: width 0.1s, height 0.1s; background-size: contain; }
         .writing-guide-cross { position: absolute; inset: 0; pointer-events: none; background-image: linear-gradient(to right, transparent 49.5%, #cbd5e1 50%, transparent 50.5%), linear-gradient(to bottom, transparent 49.5%, #cbd5e1 50%, transparent 50.5%); opacity: 0.8; }
         
-        /* 物理貼邊樣式 - 強制絕對定位 */
-        .edge-right { position: fixed !important; right: 0 !important; top: 50%; transform: translateY(-50%); z-index: 40; }
-        .edge-left { position: fixed !important; left: 0 !important; top: 50%; transform: translateY(-50%); z-index: 40; }
+        /* 物理貼邊核心樣式 - 強制絕對定位 */
+        .edge-right { position: fixed !important; right: 0 !important; top: 50% !important; transform: translateY(-50%) !important; z-index: 40; }
+        .edge-left { position: fixed !important; left: 0 !important; top: 50% !important; transform: translateY(-50%) !important; z-index: 40; }
 
         .active-tool { border: 6px solid #4f46e5 !important; box-shadow: 0 0 25px rgba(79, 70, 229, 0.5); transform: scale(1.05); }
         .locked-tools { opacity: 0.4; pointer-events: none !important; filter: grayscale(1); }
@@ -26,6 +27,7 @@
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
         
         .territory-cell { transition: all 0.3s ease; cursor: pointer; stroke: #fff; stroke-width: 2px; }
+        .active-ink-color { box-shadow: 0 0 0 4px white, 0 0 0 8px currentColor; }
     </style>
 </head>
 <body class="min-h-screen overflow-hidden bg-slate-50 font-black">
@@ -128,7 +130,7 @@
                     </div>
                     <button onclick="window.syncQuestionToAll()" class="w-full bg-indigo-500 hover:bg-indigo-400 text-white py-3 rounded-xl font-black text-xs italic uppercase">同步全體勇者</button>
                 </div>
-                <button id="pause-btn" onclick="window.togglePause()" class="w-full bg-rose-600 text-white py-4 rounded-2xl font-black text-sm italic">暫停全班作答</button>
+                <button id="pause-btn" onclick="window.togglePause()" class="w-full bg-rose-600 text-white py-4 rounded-2xl font-black text-sm italic shadow-lg">暫停全班作答</button>
             </div>
 
             <div class="flex-1 bg-white/50 rounded-[2.5rem] p-4 flex flex-col items-center justify-center border-2 border-white shadow-inner relative overflow-hidden">
@@ -179,7 +181,7 @@
                         <button onclick="window.submitHandwriting()" class="w-full bg-emerald-600 text-white py-8 rounded-[2.5rem] text-4xl font-black shadow-2xl mt-4 italic uppercase">傳送</button>
                     </div>
 
-                    <!-- 田字格容器：將套用物理貼邊 Class -->
+                    <!-- 物理貼邊容器 -->
                     <div id="canvas-container" class="tian-zi-ge w-[500px] h-[500px] shadow-2xl relative overflow-hidden bg-white">
                         <div class="writing-guide-cross"></div>
                         <canvas id="writing-canvas" width="500" height="500" class="absolute top-0 left-0 cursor-crosshair z-10 touch-none"></canvas>
@@ -205,7 +207,7 @@
                     <p id="collab-lock-info" class="text-amber-400 font-bold uppercase mt-1 text-xs">狀態：畫筆開放中</p>
                 </div>
                 <div class="grid grid-cols-2 gap-4">
-                    <button onclick="window.setCollabPen('#ef4444')" id="c-pen-red" class="bg-rose-600 text-white p-6 rounded-2xl font-black text-2xl shadow-lg border-4 border-transparent active-tool italic">紅筆</button>
+                    <button onclick="window.setCollabPen('#ef4444')" id="c-pen-red" class="bg-rose-600 text-white p-6 rounded-2xl font-black text-2xl shadow-lg border-4 border-indigo-300 active-tool italic">紅筆</button>
                     <button onclick="window.setCollabPen('#3b82f6')" id="c-pen-blue" class="bg-blue-600 text-white p-6 rounded-2xl font-black text-2xl shadow-lg border-4 border-transparent italic">藍筆</button>
                 </div>
                 <button onclick="window.setCollabPen('eraser')" id="c-tool-eraser" class="w-full bg-slate-200 text-slate-800 py-4 rounded-2xl font-black text-xl italic">橡皮擦</button>
@@ -214,21 +216,13 @@
                     <button onclick="window.clearCollabTeacherOnly()" class="bg-slate-700 text-white py-3 rounded-xl text-xs font-black italic uppercase">清除指導線</button>
                 </div>
                 
-                <!-- 遠端清除按鈕 -->
+                <!-- 遠端清除按鈕 - 強制清空學生本地畫布 -->
                 <button onclick="window.clearStudentInkRemote()" class="w-full bg-rose-600 text-white py-4 rounded-2xl font-black text-xs italic mt-4 uppercase shadow-xl hover:bg-rose-500 transition-colors">一鍵清除學員筆跡</button>
                 
                 <button id="lock-student-btn" onclick="window.toggleStudentLock()" class="w-full bg-amber-600 text-white py-6 rounded-3xl font-black text-xl shadow-xl mt-4 italic uppercase">鎖定學員畫筆</button>
                 <button onclick="window.closeCollab()" class="w-full bg-emerald-600 text-white py-6 rounded-3xl font-black text-xl shadow-xl italic uppercase">結束指導並解鎖</button>
             </div>
         </div>
-    </div>
-
-    <div id="attack-modal" class="hidden full-screen-panel bg-slate-900/95 backdrop-blur-xl z-[150] flex flex-col items-center justify-center p-10">
-        <h2 class="text-6xl text-white italic uppercase mb-12 text-center font-black">任務達成！奪取領地！</h2>
-        <div class="w-full max-w-[750px] relative">
-            <svg id="board-svg-main" viewBox="0 0 550 550" class="w-full h-auto drop-shadow-2xl"></svg>
-        </div>
-        <button onclick="document.getElementById('attack-modal').classList.add('hidden')" class="mt-12 bg-white px-12 py-4 rounded-full font-black text-2xl italic uppercase">關閉視窗</button>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/qrcode@1.4.4/build/qrcode.min.js"></script>
@@ -241,7 +235,7 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
-        const SYNC_ID = 'TW-2026-FINAL-PHYSICAL-EDGE-FIX-V8';
+        const SYNC_ID = 'TW-2026-FINAL-PHYSICAL-EDGE-FIX-V10';
 
         let role = null, user = null, gameState = null, currentPlayerId = null, handPref = 'right';
         let currentTool = 'pen', collabPenColor = '#ef4444', collabTargetId = null;
@@ -312,10 +306,10 @@
                     if(role === 'student' && currentPlayerId) {
                         const me = (gameState.players || []).find(p => p.id === currentPlayerId);
                         if(me) {
-                            // 修正：如果資料庫的 ink 是空的，但本地畫布有東西，代表老師剛剛按了遠端清空
-                            const canvas = document.getElementById('writing-canvas');
+                            /* 重要：如果資料庫的 ink 是空的且本地有東西，代表老師剛剛按了遠端清空 */
                             if(me.ink === '' && undoStack.length > 1) {
-                                window.clearCanvas(false); // 僅清空本地畫布，不回傳
+                                console.log("遠端指令：清空畫布");
+                                window.clearCanvas(false); 
                             }
 
                             const isLocked = me.locked || gameState.paused;
@@ -365,27 +359,17 @@
                     const c = document.getElementById('writing-canvas');
                     const tc = document.getElementById('remote-ink-canvas');
                     const oldSize = c.width;
-                    
                     const inkImg = new Image(); inkImg.src = c.toDataURL();
                     const remoteImg = new Image(); remoteImg.src = tc.toDataURL();
 
                     inkImg.onload = () => {
                         canvasScale = Math.max(0.6, Math.min(1.6, canvasScale + delta));
                         const newSize = 500 * canvasScale;
-                        
                         const cb = document.getElementById('canvas-container');
-                        cb.style.width = `${newSize}px`;
-                        cb.style.height = `${newSize}px`;
-                        
-                        c.width = newSize; c.height = newSize; 
-                        tc.width = newSize; tc.height = newSize;
-                        
-                        const ctx = c.getContext('2d');
-                        ctx.drawImage(inkImg, 0, 0, oldSize, oldSize, 0, 0, newSize, newSize);
-                        
-                        const tctx = tc.getContext('2d');
-                        tctx.drawImage(remoteImg, 0, 0, oldSize, oldSize, 0, 0, newSize, newSize);
-                        
+                        cb.style.width = `${newSize}px`; cb.style.height = `${newSize}px`;
+                        c.width = newSize; c.height = newSize; tc.width = newSize; tc.height = newSize;
+                        const ctx = c.getContext('2d'); ctx.drawImage(inkImg, 0, 0, oldSize, oldSize, 0, 0, newSize, newSize);
+                        const tctx = tc.getContext('2d'); tctx.drawImage(remoteImg, 0, 0, oldSize, oldSize, 0, 0, newSize, newSize);
                         window.initCanvas(true);
                     };
                 },
@@ -432,38 +416,15 @@
                     lucide.createIcons();
                 },
 
-                toggleIndividualMonitor: async (sid) => {
-                    const ups = gameState.players.map(p => { if(p.id === sid) p.monitorHidden = !p.monitorHidden; return p; });
-                    await updateDoc(doc(db, 'artifacts', SYNC_ID), { players: ups });
-                },
-
-                toggleAllMonitors: async (hide) => {
-                    const ups = (gameState.players || []).map(p => ({ ...p, monitorHidden: hide }));
-                    await updateDoc(doc(db, 'artifacts', SYNC_ID), { players: ups });
-                },
-
-                syncQuestionToAll: async () => {
-                    await updateDoc(doc(db, 'artifacts', SYNC_ID), { curQ: teacherPreviewIdx, lastUpdate: Date.now() });
-                },
-
-                syncInk: async (force = false) => {
-                    const now = Date.now();
-                    if(!force && now - lastSyncTime < 300) return;
-                    lastSyncTime = now;
-                    const c = document.getElementById('writing-canvas');
-                    const data = c.toDataURL('image/webp', 0.2);
-                    const ups = gameState.players.map(p => { if(p.id === currentPlayerId) p.ink = data; return p; });
-                    await updateDoc(doc(db, 'artifacts', SYNC_ID), { players: ups });
-                },
-
                 clearStudentInkRemote: async () => {
                     if(!collabTargetId) return;
+                    console.log("老師指令：強制清除學生 " + collabTargetId + " 的筆跡");
                     const ups = gameState.players.map(p => { 
                         if(p.id === collabTargetId) p.ink = ''; 
                         return p; 
                     });
                     await updateDoc(doc(db, 'artifacts', SYNC_ID), { players: ups });
-                    // 為了即時性，如果是在指導模式，本地預覽圖也清掉
+                    // 即時清除老師側邊的快照預覽
                     const img = document.getElementById('collab-student-view');
                     if(img) img.getContext('2d').clearRect(0,0,700,700);
                 },
@@ -481,16 +442,10 @@
 
                 updateCollabStudentView: () => {
                     const me = gameState.players.find(p => p.id === collabTargetId);
-                    if(!me || !me.ink) {
-                        const c = document.getElementById('collab-student-view');
-                        if(c) c.getContext('2d').clearRect(0,0,700,700);
-                        return;
-                    }
+                    const c = document.getElementById('collab-student-view'), ctx = c.getContext('2d');
+                    if(!me || !me.ink) { ctx.clearRect(0,0,700,700); return; }
                     const img = new Image();
-                    img.onload = () => {
-                        const c = document.getElementById('collab-student-view'), ctx = c.getContext('2d');
-                        ctx.clearRect(0,0,700,700); ctx.drawImage(img, 0,0,700,700); 
-                    };
+                    img.onload = () => { ctx.clearRect(0,0,700,700); ctx.drawImage(img, 0,0,700,700); };
                     img.src = me.ink;
                 },
 
@@ -537,52 +492,18 @@
                     await updateDoc(doc(db, 'artifacts', SYNC_ID), { players: ups }); 
                 },
 
-                drawRemoteInk: (data) => { 
-                    const c = document.getElementById('remote-ink-canvas'), ctx = c.getContext('2d'), img = new Image(); 
-                    img.onload = () => { ctx.clearRect(0,0,c.width,c.height); ctx.drawImage(img, 0,0,c.width,c.height); }; 
-                    img.src = data; 
+                syncInk: async (force = false) => {
+                    const now = Date.now();
+                    if(!force && now - lastSyncTime < 300) return;
+                    lastSyncTime = now;
+                    const c = document.getElementById('writing-canvas');
+                    const data = c.toDataURL('image/webp', 0.15);
+                    const ups = gameState.players.map(p => { if(p.id === currentPlayerId) p.ink = data; return p; });
+                    await updateDoc(doc(db, 'artifacts', SYNC_ID), { players: ups });
                 },
 
-                undoCollab: () => {
-                    if(collabUndoStack.length <= 1) return;
-                    collabUndoStack.pop();
-                    const lastImg = collabUndoStack[collabUndoStack.length - 1];
-                    const c = document.getElementById('collab-canvas'), ctx = c.getContext('2d');
-                    ctx.clearRect(0,0,700,700);
-                    if(lastImg) { const img = new Image(); img.onload = () => ctx.drawImage(img, 0, 0); img.src = lastImg; }
-                    window.syncCollabInk();
-                },
-
-                clearCollabTeacherOnly: () => {
-                    document.getElementById('collab-canvas').getContext('2d').clearRect(0,0,700,700);
-                    window.syncCollabInk();
-                },
-
-                renderQuestionList: () => {
-                    if(!gameState || !gameState.questions) return;
-                    const container = document.getElementById('question-list');
-                    container.innerHTML = gameState.questions.map((q, i) => `
-                        <div class="bg-white p-4 rounded-2xl border flex items-center gap-4 mb-2 shadow-sm font-black">
-                            <span class="bg-slate-900 text-white px-3 py-1 rounded text-[10px] uppercase font-black italic">${q.type}</span>
-                            <span class="flex-1 text-sm italic font-black text-slate-800">${q.content}</span>
-                        </div>
-                    `).join('');
-                },
-
-                startTurn: () => { 
-                    const q = gameState.questions[gameState.curQ || 0]; 
-                    if(!q) return; 
-                    window.currentLocalQ = gameState.curQ;
-                    document.getElementById('q-content-text').innerText = q.content; 
-                    document.getElementById('q-index-label').innerText = `#${(gameState.curQ+1).toString().padStart(2,'0')}`; 
-                    document.getElementById('handwriting-area').classList.remove('hidden'); 
-                    window.clearCanvas(true); 
-                },
-
-                setTool: (t) => { 
-                    currentTool = t; 
-                    document.getElementById('tool-pen').classList.toggle('active-tool', t==='pen');
-                    document.getElementById('tool-eraser').classList.toggle('active-tool', t==='eraser');
+                syncQuestionToAll: async () => {
+                    await updateDoc(doc(db, 'artifacts', SYNC_ID), { curQ: teacherPreviewIdx, lastUpdate: Date.now() });
                 },
 
                 clearCanvas: (shouldSync = true) => { 
@@ -643,7 +564,57 @@
                 submitHandwriting: () => { canAttack = true; document.getElementById('attack-modal').classList.remove('hidden'); },
                 openFullMap: () => document.getElementById('attack-modal').classList.remove('hidden'),
                 isLocked: () => { const me = (gameState.players || []).find(p => p.id === currentPlayerId); return me?.locked || gameState?.paused; },
-                copyJoinLink: () => { const el = document.createElement('textarea'); el.value = window.location.href; document.body.appendChild(el); el.select(); document.execCommand('copy'); document.body.removeChild(el); }
+                copyJoinLink: () => { const el = document.createElement('textarea'); el.value = window.location.href; document.body.appendChild(el); el.select(); document.execCommand('copy'); document.body.removeChild(el); },
+                drawRemoteInk: (data) => { 
+                    const c = document.getElementById('remote-ink-canvas'), ctx = c.getContext('2d'), img = new Image(); 
+                    img.onload = () => { ctx.clearRect(0,0,c.width,c.height); ctx.drawImage(img, 0,0,c.width,c.height); }; 
+                    img.src = data; 
+                },
+                undoCollab: () => {
+                    if(collabUndoStack.length <= 1) return;
+                    collabUndoStack.pop();
+                    const lastImg = collabUndoStack[collabUndoStack.length - 1];
+                    const c = document.getElementById('collab-canvas'), ctx = c.getContext('2d');
+                    ctx.clearRect(0,0,700,700);
+                    if(lastImg) { const img = new Image(); img.onload = () => ctx.drawImage(img, 0, 0); img.src = lastImg; }
+                    window.syncCollabInk();
+                },
+                clearCollabTeacherOnly: () => {
+                    document.getElementById('collab-canvas').getContext('2d').clearRect(0,0,700,700);
+                    window.syncCollabInk();
+                },
+                renderQuestionList: () => {
+                    if(!gameState || !gameState.questions) return;
+                    const container = document.getElementById('question-list');
+                    container.innerHTML = gameState.questions.map((q, i) => `
+                        <div class="bg-white p-4 rounded-2xl border flex items-center gap-4 mb-2 shadow-sm font-black">
+                            <span class="bg-slate-900 text-white px-3 py-1 rounded text-[10px] uppercase font-black italic">${q.type}</span>
+                            <span class="flex-1 text-sm italic font-black text-slate-800">${q.content}</span>
+                        </div>
+                    `).join('');
+                },
+                startTurn: () => { 
+                    const q = gameState.questions[gameState.curQ || 0]; 
+                    if(!q) return; 
+                    window.currentLocalQ = gameState.curQ;
+                    document.getElementById('q-content-text').innerText = q.content; 
+                    document.getElementById('q-index-label').innerText = `#${(gameState.curQ+1).toString().padStart(2,'0')}`; 
+                    document.getElementById('handwriting-area').classList.remove('hidden'); 
+                    window.clearCanvas(true); 
+                },
+                setTool: (t) => { 
+                    currentTool = t; 
+                    document.getElementById('tool-pen').classList.toggle('active-tool', t==='pen');
+                    document.getElementById('tool-eraser').classList.toggle('active-tool', t==='eraser');
+                },
+                toggleIndividualMonitor: async (sid) => {
+                    const ups = gameState.players.map(p => { if(p.id === sid) p.monitorHidden = !p.monitorHidden; return p; });
+                    await updateDoc(doc(db, 'artifacts', SYNC_ID), { players: ups });
+                },
+                toggleAllMonitors: async (hide) => {
+                    const ups = (gameState.players || []).map(p => ({ ...p, monitorHidden: hide }));
+                    await updateDoc(doc(db, 'artifacts', SYNC_ID), { players: ups });
+                }
             });
         };
 
