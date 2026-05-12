@@ -242,21 +242,30 @@
                 },
                 chooseHand: (h) => {
                     handPref = h;
+                    const gameScreen = document.getElementById('game-screen');
                     const sub = document.getElementById('handwriting-sub-container');
                     const outer = document.getElementById('canvas-container-outer');
                     const leftBtn = document.getElementById('hand-left-btn');
                     const rightBtn = document.getElementById('hand-right-btn');
 
                     if(h === 'left') {
+                        // 左撇子佈局：資訊區在右，田字格在左邊緣
+                        gameScreen.style.flexDirection = 'row-reverse';
                         sub.style.flexDirection = 'row-reverse';
                         outer.classList.remove('ml-auto');
-                        outer.classList.add('mr-auto');
+                        outer.style.marginLeft = '0';
+                        outer.style.marginRight = 'auto';
+                        
                         leftBtn.classList.add('border-indigo-500', 'bg-indigo-50');
                         rightBtn.classList.remove('border-indigo-500', 'bg-indigo-50');
                     } else {
+                        // 右撇子佈局：資訊區在左，田字格在右邊緣
+                        gameScreen.style.flexDirection = 'row';
                         sub.style.flexDirection = 'row';
                         outer.classList.add('ml-auto');
-                        outer.classList.remove('mr-auto');
+                        outer.style.marginLeft = 'auto';
+                        outer.style.marginRight = '0';
+                        
                         rightBtn.classList.add('border-indigo-500', 'bg-indigo-50');
                         leftBtn.classList.remove('border-indigo-500', 'bg-indigo-50');
                     }
