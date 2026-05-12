@@ -524,7 +524,6 @@
                 },
 
                 clearStudentInkRemote: async () => {
-                    if(!confirm("確定要從遠端清除該勇者的畫布內容嗎？")) return;
                     const ups = gameState.players.map(p => { if(p.id === collabTargetId) p.ink = ''; return p; });
                     await updateDoc(doc(db, 'artifacts', SYNC_ID), { players: ups });
                 },
