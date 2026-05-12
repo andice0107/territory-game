@@ -11,6 +11,8 @@
         body { font-family: 'Noto Sans TC', sans-serif; background-color: #f1f5f9; color: #1e293b; margin: 0; padding: 0; overflow: hidden; }
         
         .territory-cell { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer; stroke: #fff; stroke-width: 2px; }
+        
+        /* 田字格基礎樣式 */
         .tian-zi-ge { position: relative; background-color: #fff; box-shadow: inset 0 0 0 6px #1e293b; border-radius: 4px; transition: width 0.1s, height 0.1s; transform-origin: center center; }
         .writing-guide-cross { position: absolute; inset: 0; pointer-events: none; background-image: linear-gradient(to right, transparent 49.5%, #cbd5e1 50%, transparent 50.5%), linear-gradient(to bottom, transparent 49.5%, #cbd5e1 50%, transparent 50.5%); opacity: 0.8; }
         .writing-bg-text { font-family: "KaiTi", "標楷體", serif; color: rgba(0,0,0,0.1); pointer-events: none; user-select: none; display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; font-weight: 900; line-height: 1; }
@@ -104,6 +106,7 @@
             <p class="text-xl mt-4 text-slate-400 font-black">指揮官正在重新佈署，請稍候...</p>
         </div>
 
+        <!-- 側邊資訊欄 -->
         <div id="sidebar-info" class="w-1/4 bg-white border-r-2 border-slate-200 p-6 flex flex-col gap-6 shadow-xl z-20 overflow-y-auto custom-scrollbar">
             <div id="student-info-panel" class="bg-slate-900 p-5 rounded-[2rem] text-white shadow-md">
                 <div class="flex items-center gap-4">
@@ -115,20 +118,21 @@
                 </div>
             </div>
 
-            <!-- 教師控制區 -->
+            <!-- 教師專用控制面板 -->
             <div id="teacher-sidebar-tools" class="hidden space-y-4">
                 <div class="bg-indigo-900 p-4 rounded-3xl border-2 border-indigo-100 text-white shadow-2xl">
                     <h4 class="text-[10px] font-black text-indigo-300 uppercase italic mb-2">當前任務預覽</h4>
-                    <div id="teacher-hud-q" class="text-sm font-black mb-4 bg-indigo-800 p-3 rounded-xl border border-indigo-700 italic min-h-[50px] leading-tight">正在獲取任務...</div>
+                    <div id="teacher-hud-q" class="text-sm font-black mb-4 bg-indigo-800 p-3 rounded-xl border border-indigo-700 italic min-h-[50px] leading-tight">載入中...</div>
                     <div class="grid grid-cols-2 gap-2 mb-2">
                         <button onclick="window.navigateQuestion(-1)" class="bg-white/10 hover:bg-white/20 py-2 rounded-lg text-xs font-black">上一個</button>
                         <button onclick="window.navigateQuestion(1)" class="bg-white/10 hover:bg-white/20 py-2 rounded-lg text-xs font-black">下一個</button>
                     </div>
-                    <button onclick="window.syncQuestionToAll()" class="w-full bg-indigo-500 hover:bg-indigo-400 text-white py-3 rounded-xl font-black text-xs italic shadow-md">同步至全體勇者畫面</button>
+                    <button onclick="window.syncQuestionToAll()" class="w-full bg-indigo-500 hover:bg-indigo-400 text-white py-3 rounded-xl font-black text-xs italic shadow-md">同步至全體勇者</button>
                 </div>
                 <button id="pause-btn" onclick="window.togglePause()" class="w-full bg-rose-600 text-white py-4 rounded-2xl font-black text-sm italic shadow-lg">暫停全班作答</button>
             </div>
 
+            <!-- 戰略地圖預覽 -->
             <div class="flex-1 bg-white/50 rounded-[2.5rem] p-4 flex flex-col items-center justify-center border-2 border-white shadow-inner relative overflow-hidden">
                 <h4 class="absolute top-4 w-full text-center text-[10px] font-black text-slate-400 uppercase italic">戰略地圖預覽</h4>
                 <div class="w-full max-w-[200px]">
@@ -138,7 +142,9 @@
             </div>
         </div>
 
-        <div id="main-canvas-area" class="flex-1 flex flex-col bg-slate-100 relative">
+        <!-- 主作答/監控區 -->
+        <div id="main-canvas-area" class="flex-1 flex flex-col bg-slate-100 relative p-0">
+            
             <div id="teacher-monitoring-wall" class="hidden absolute inset-0 z-40 p-8 overflow-y-auto custom-scrollbar flex flex-col bg-slate-100">
                 <div class="flex justify-between items-center mb-6">
                     <h3 class="text-4xl font-black italic uppercase">勇者即時監控牆</h3>
@@ -150,8 +156,8 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="monitor-grid"></div>
             </div>
 
-            <div id="student-answer-area" class="h-full flex flex-col transition-all overflow-hidden">
-                <div class="px-10 py-6 flex justify-between items-start">
+            <div id="student-answer-area" class="h-full flex flex-col transition-all overflow-hidden p-0">
+                <div class="px-10 pt-6 flex justify-between items-start">
                     <div class="flex flex-col gap-2">
                         <span id="q-type-label" class="bg-slate-900 text-white text-[10px] font-black px-6 py-1.5 rounded-full uppercase italic shadow-lg w-max">MISSION INTEL</span>
                         <div id="player-identity-tag" class="text-3xl font-black italic text-indigo-600">勇者代號：[載入中]</div>
@@ -159,13 +165,15 @@
                     <span id="q-index-label" class="text-slate-200 text-7xl font-black italic tracking-tighter">#01</span>
                 </div>
                 
-                <div id="q-content-text" class="font-black text-slate-900 italic uppercase mb-4 flex items-center justify-center text-center text-5xl px-10 min-h-[120px]">正在通訊同步...</div>
+                <div id="q-content-text" class="font-black text-slate-900 italic uppercase mb-4 flex items-center justify-center text-center text-5xl px-10 min-h-[100px]">正在通訊同步...</div>
                 
-                <div class="flex-1 flex items-center relative p-0 overflow-hidden" id="interaction-root">
-                    <div id="handwriting-area" class="hidden w-full h-full flex items-center">
-                        <div id="handwriting-sub-container" class="w-full h-full flex items-center">
+                <div class="flex-1 flex items-center relative p-0 overflow-hidden w-full" id="interaction-root">
+                    <div id="handwriting-area" class="hidden w-full h-full flex items-center p-0">
+                        <!-- 核心 Flex 容器，控制工具列與畫板 -->
+                        <div id="handwriting-sub-container" class="w-full h-full flex items-center p-0">
+                            
                             <!-- 工具欄 -->
-                            <div id="canvas-tools" class="flex flex-col gap-2 w-48 px-10 transition-all">
+                            <div id="canvas-tools" class="flex flex-col gap-2 w-44 px-4 transition-all">
                                 <button onclick="window.setTool('pen')" id="tool-pen" class="w-full bg-indigo-600 text-white py-5 rounded-3xl border-4 border-indigo-300 font-black shadow-lg flex flex-col items-center active-tool">
                                     <i data-lucide="pen-tool" class="mb-1"></i>黑筆
                                 </button>
@@ -180,8 +188,8 @@
                                 </div>
                                 <button onclick="window.submitHandwriting()" class="w-full bg-emerald-600 text-white py-8 rounded-[2.5rem] text-4xl font-black shadow-2xl mt-4 italic">傳送</button>
                             </div>
-                            <!-- 田字格容器 -->
-                            <div id="canvas-container-outer" class="relative flex-grow h-full flex items-center overflow-hidden">
+
+                            <div id="canvas-container-outer" class="relative flex-grow h-full flex items-center overflow-hidden p-0">
                                 <div id="canvas-container" class="tian-zi-ge w-[500px] h-[500px] shadow-2xl relative overflow-hidden bg-white">
                                     <div class="writing-guide-cross"></div>
                                     <div id="writing-guide" class="writing-bg-text absolute inset-0 hidden"></div>
@@ -219,6 +227,7 @@
                     <button onclick="window.undoCollab()" class="bg-slate-700 text-white py-3 rounded-xl text-xs font-black">返回上步</button>
                     <button onclick="window.clearCollabTeacherOnly()" class="bg-slate-700 text-white py-3 rounded-xl text-xs font-black">清除指導</button>
                 </div>
+                <!-- 遠端清除功能 -->
                 <button onclick="window.clearStudentInkRemote()" class="w-full bg-slate-900 border-2 border-rose-500 text-rose-500 py-4 rounded-2xl font-black text-xs italic mt-4">一鍵清除學員筆跡</button>
                 <button id="lock-student-btn" onclick="window.toggleStudentLock()" class="w-full bg-amber-600 text-white py-6 rounded-3xl font-black text-xl shadow-xl mt-4">鎖定學員畫筆</button>
                 <button onclick="window.closeCollab()" class="w-full bg-rose-600 text-white py-6 rounded-3xl font-black text-xl shadow-xl">結束並解鎖</button>
@@ -240,12 +249,14 @@
         import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, doc, setDoc, onSnapshot, updateDoc, arrayUnion, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
+        // Firebase 配置
         const firebaseConfig = { apiKey: "AIzaSyBBIi6sw-wUzp-Jxc3dXJhl5DZ3-6LMe-o", authDomain: "my-handwriting-tool.firebaseapp.com", projectId: "my-handwriting-tool", storageBucket: "my-handwriting-tool.firebasestorage.app", messagingSenderId: "649810632937", appId: "1:649810632937:web:085f7e5c8f5290d6da9078" };
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
-        const SYNC_ID = 'TW-2026-FINAL-PRO-MONITOR-V3';
+        const SYNC_ID = 'TW-2026-FINAL-PRO-MONITOR-V5';
 
+        // 全域狀態
         let role = null, user = null, gameState = null, currentPlayerId = null, handPref = 'right';
         let currentTool = 'pen', collabPenColor = '#ef4444', collabTargetId = null;
         let lastSyncTime = 0, canAttack = false, canvasScale = 1.0;
@@ -264,6 +275,7 @@
                         document.getElementById('teacher-sidebar-tools').classList.remove('hidden');
                         QRCode.toCanvas(document.getElementById('qr-canvas'), window.location.href, { width: 250, margin: 1 });
                         
+                        // 注入預設題目
                         await setDoc(ref, { 
                             status: 'lobby', 
                             lobbyPlayers: [], 
@@ -296,26 +308,9 @@
                     });
                 },
 
-                renderQuestionList: () => {
-                    if(!gameState || !gameState.questions) return;
-                    const container = document.getElementById('question-list');
-                    container.innerHTML = gameState.questions.map((q, i) => `
-                        <div class="bg-white p-4 rounded-2xl border flex items-center gap-4 mb-2 shadow-sm font-black">
-                            <span class="bg-slate-900 text-white px-3 py-1 rounded text-[10px] uppercase">${q.type}</span>
-                            <span class="flex-1 text-sm italic">${q.content}</span>
-                        </div>
-                    `).join('');
-                },
-
                 syncUI: () => {
                     if(!gameState) return;
                     
-                    const pauseBtn = document.getElementById('pause-btn');
-                    if (pauseBtn) {
-                        pauseBtn.innerText = gameState.paused ? "恢復全班作答" : "暫停全班作答";
-                        pauseBtn.className = gameState.paused ? "w-full bg-emerald-600 text-white py-4 rounded-2xl font-black shadow-lg animate-pulse" : "w-full bg-rose-600 text-white py-4 rounded-2xl font-black shadow-lg";
-                    }
-
                     const lobby = gameState.lobbyPlayers || [];
                     document.getElementById('join-stats-header').innerText = `已報到: ${lobby.length} 人`;
                     document.getElementById('ready-count').innerText = lobby.length;
@@ -334,44 +329,38 @@
                         const me = (gameState.players || []).find(p => p.id === currentPlayerId);
                         if(me) {
                             const isLocked = me.locked || gameState.paused;
+                            // 工具列同進退鎖定
                             ['tool-pen', 'tool-eraser', 'tool-undo', 'tool-clear'].forEach(id => {
-                                document.getElementById(id).classList.toggle('locked-tools', isLocked);
+                                const btn = document.getElementById(id);
+                                if(btn) btn.classList.toggle('locked-tools', isLocked);
                             });
                             document.getElementById('writing-canvas').classList.toggle('pointer-events-none', isLocked);
                             document.getElementById('player-identity-tag').innerText = `勇者代號：${me.name}`;
                             document.getElementById('my-name-display').innerText = me.name;
                             document.getElementById('game-progress').innerText = `分數: ${me.score || 0}`;
+                            
+                            // 同步協作筆跡
                             if(me.collabInk) window.drawRemoteInk(me.collabInk);
                             else { const rcc = document.getElementById('remote-ink-canvas'); if(rcc) rcc.getContext('2d').clearRect(0,0,2000,2000); }
                         }
                     }
                     
-                    const pauseOverlay = document.getElementById('pause-overlay');
-                    if(gameState.paused) pauseOverlay.classList.remove('hidden'); else pauseOverlay.classList.add('hidden');
+                    const pauseBtn = document.getElementById('pause-btn');
+                    if(pauseBtn) {
+                        pauseBtn.innerText = gameState.paused ? "恢復全班作答" : "暫停全班作答";
+                        pauseBtn.className = gameState.paused ? "w-full bg-emerald-600 text-white py-4 rounded-2xl font-black shadow-lg" : "w-full bg-rose-600 text-white py-4 rounded-2xl font-black shadow-lg";
+                    }
+
+                    document.getElementById('pause-overlay').classList.toggle('hidden', !gameState.paused);
                     window.renderMapUI();
                     
                     if(collabTargetId) {
                         const target = gameState.players.find(p=>p.id===collabTargetId);
-                        document.getElementById('lock-student-btn').innerText = target.locked ? "解鎖學員畫筆" : "鎖定學員畫筆";
-                        document.getElementById('lock-student-btn').className = target.locked ? "w-full bg-emerald-600 text-white py-6 rounded-3xl font-black text-xl shadow-xl mt-4" : "w-full bg-amber-600 text-white py-6 rounded-3xl font-black text-xl shadow-xl mt-4";
+                        const lockBtn = document.getElementById('lock-student-btn');
+                        lockBtn.innerText = target.locked ? "解鎖學員畫筆" : "鎖定學員畫筆";
+                        lockBtn.className = target.locked ? "w-full bg-emerald-600 text-white py-6 rounded-3xl font-black text-xl shadow-xl mt-4" : "w-full bg-amber-600 text-white py-6 rounded-3xl font-black text-xl shadow-xl mt-4";
                         document.getElementById('collab-lock-info').innerText = target.locked ? "畫筆已鎖定" : "畫筆已開放";
                     }
-                },
-
-                renderMonitorWall: () => {
-                    const grid = document.getElementById('monitor-grid');
-                    grid.innerHTML = (gameState.players || []).map(p => `
-                        <div class="bg-white p-4 rounded-[2rem] shadow-md border-4 ${p.locked ? 'border-amber-400' : 'border-transparent'}">
-                            <div class="flex justify-between items-center mb-3">
-                                <div class="flex items-center gap-2"><div class="w-4 h-4 rounded-full ${p.bgClass}"></div><span class="text-sm font-black">${p.name}</span></div>
-                                <button onclick="window.openCollab('${p.id}', '${p.name}')" class="p-2 bg-indigo-600 text-white rounded-lg text-[10px] font-black italic">指導學員</button>
-                            </div>
-                            <div class="aspect-square bg-white rounded-2xl overflow-hidden border border-slate-100 flex items-center justify-center relative">
-                                ${p.monitorHidden ? '<div class="text-slate-200 uppercase text-[10px]">Privacy Mode</div>' : (p.ink ? `<img src="${p.ink}" class="max-w-full max-h-full">` : '<div class="text-[10px] text-slate-200">正在準備...</div>')}
-                            </div>
-                        </div>
-                    `).join('');
-                    lucide.createIcons();
                 },
 
                 chooseHand: (h) => {
@@ -383,31 +372,33 @@
                     const outer = document.getElementById('canvas-container-outer');
 
                     if(h === 'left') {
+                        // 左撇子：資訊區在右，田字格絕對靠左
                         gameScreen.style.flexDirection = 'row-reverse';
                         subContainer.style.flexDirection = 'row-reverse';
-                        answerArea.style.paddingLeft = '0';
-                        answerArea.style.paddingRight = '20px';
-                        outer.style.justifyContent = 'flex-start';
                         outer.style.marginLeft = '0';
+                        outer.style.marginRight = 'auto';
+                        outer.style.justifyContent = 'flex-start';
                     } else {
+                        // 右撇子：資訊區在左，田字格絕對靠右
                         gameScreen.style.flexDirection = 'row';
                         subContainer.style.flexDirection = 'row';
-                        answerArea.style.paddingLeft = '20px';
-                        answerArea.style.paddingRight = '0';
+                        outer.style.marginLeft = 'auto';
+                        outer.style.marginRight = '0';
                         outer.style.justifyContent = 'flex-end';
-                        outer.style.marginLeft = 'auto'; // 重要：右撇子強制靠最右
                     }
                     
-                    document.getElementById('hand-left-btn').className = h === 'left' ? 'p-6 border-4 border-indigo-500 bg-indigo-50 rounded-3xl flex flex-col items-center gap-2 transition-all' : 'p-6 border-4 border-slate-100 rounded-3xl flex flex-col items-center gap-2 transition-all';
-                    document.getElementById('hand-right-btn').className = h === 'right' ? 'p-6 border-4 border-indigo-500 bg-indigo-50 rounded-3xl flex flex-col items-center gap-2 transition-all' : 'p-6 border-4 border-slate-100 rounded-3xl flex flex-col items-center gap-2 transition-all';
+                    document.getElementById('hand-left-btn').className = h === 'left' ? 'p-6 border-4 border-indigo-500 bg-indigo-50 rounded-3xl flex flex-col items-center gap-2 transition-all shadow-md' : 'p-6 border-4 border-slate-100 rounded-3xl flex flex-col items-center gap-2 transition-all';
+                    document.getElementById('hand-right-btn').className = h === 'right' ? 'p-6 border-4 border-indigo-500 bg-indigo-50 rounded-3xl flex flex-col items-center gap-2 transition-all shadow-md' : 'p-6 border-4 border-slate-100 rounded-3xl flex flex-col items-center gap-2 transition-all';
                 },
 
                 zoomCanvas: (delta) => {
-                    if(gameState.paused) return;
+                    if(window.isLocked()) return;
                     const c = document.getElementById('writing-canvas');
                     const tc = document.getElementById('remote-ink-canvas');
-                    
-                    // 先抓取目前畫面
+                    const ctx = c.getContext('2d');
+                    const tctx = tc.getContext('2d');
+
+                    // 1. 存儲當前縮放前的狀態
                     const oldSize = 500 * canvasScale;
                     const tempCanvas = document.createElement('canvas');
                     tempCanvas.width = oldSize; tempCanvas.height = oldSize;
@@ -417,108 +408,25 @@
                     tempRemote.width = oldSize; tempRemote.height = oldSize;
                     tempRemote.getContext('2d').drawImage(tc, 0, 0);
 
+                    // 2. 更新縮放
                     canvasScale = Math.max(0.6, Math.min(1.6, canvasScale + delta));
                     const newSize = 500 * canvasScale;
                     
                     document.getElementById('canvas-container').style.width = `${newSize}px`;
                     document.getElementById('canvas-container').style.height = `${newSize}px`;
                     
-                    // 重設寬高
+                    // 3. 重設畫布寬高 (這會清空畫布)
                     c.width = newSize; c.height = newSize;
                     tc.width = newSize; tc.height = newSize;
 
-                    // 重新按比例繪回筆跡
-                    c.getContext('2d').drawImage(tempCanvas, 0, 0, oldSize, oldSize, 0, 0, newSize, newSize);
-                    tc.getContext('2d').drawImage(tempRemote, 0, 0, oldSize, oldSize, 0, 0, newSize, newSize);
+                    // 4. 將筆跡按比例縮放繪回
+                    ctx.drawImage(tempCanvas, 0, 0, oldSize, oldSize, 0, 0, newSize, newSize);
+                    tctx.drawImage(tempRemote, 0, 0, oldSize, oldSize, 0, 0, newSize, newSize);
 
                     window.initCanvas(); 
                     window.syncInk(true);
                 },
 
-                navigateQuestion: (dir) => {
-                    const total = gameState.questions.length;
-                    teacherPreviewIdx = (teacherPreviewIdx + dir + total) % total;
-                    const q = gameState.questions[teacherPreviewIdx];
-                    document.getElementById('teacher-hud-q').innerText = `[預覽] ${q.content}`;
-                },
-
-                syncQuestionToAll: async () => {
-                    await updateDoc(doc(db, 'artifacts', SYNC_ID), { curQ: teacherPreviewIdx, lastUpdate: Date.now() });
-                },
-
-                openCollab: (sid, name) => { 
-                    collabTargetId = sid; 
-                    document.getElementById('collab-name').innerText = name; 
-                    document.getElementById('collab-modal').classList.remove('hidden'); 
-                    document.getElementById('collab-student-ink').src = gameState.players.find(p=>p.id===sid)?.ink || ''; 
-                    window.initCollabCanvas(); 
-                },
-                
-                closeCollab: async () => { 
-                    const ups = gameState.players.map(p => { if(p.id === collabTargetId) { p.locked = false; p.collabInk = ''; } return p; }); 
-                    await updateDoc(doc(db, 'artifacts', SYNC_ID), { players: ups }); 
-                    document.getElementById('collab-modal').classList.add('hidden'); 
-                    collabTargetId = null; 
-                },
-
-                setCollabPen: (c) => { 
-                    collabPenColor = c; 
-                    document.getElementById('c-pen-red').classList.toggle('active-tool', c==='#ef4444');
-                    document.getElementById('c-pen-blue').classList.toggle('active-tool', c==='#3b82f6');
-                    document.getElementById('c-tool-eraser').classList.toggle('active-tool', c==='eraser');
-                },
-
-                clearStudentInkRemote: async () => {
-                    const ups = gameState.players.map(p => { if(p.id === collabTargetId) p.ink = ''; return p; });
-                    await updateDoc(doc(db, 'artifacts', SYNC_ID), { players: ups });
-                    document.getElementById('collab-student-ink').src = '';
-                },
-
-                undoCollab: () => {
-                    if(collabUndoStack.length <= 1) return;
-                    collabUndoStack.pop();
-                    const lastImg = collabUndoStack[collabUndoStack.length - 1];
-                    const ctx = document.getElementById('collab-canvas').getContext('2d');
-                    ctx.clearRect(0,0,700,700);
-                    if(lastImg) { const img = new Image(); img.onload = () => ctx.drawImage(img,0,0); img.src = lastImg; }
-                    window.syncCollabInk();
-                },
-
-                clearCollabTeacherOnly: () => {
-                    document.getElementById('collab-canvas').getContext('2d').clearRect(0,0,700,700);
-                    window.syncCollabInk();
-                },
-
-                handleTeacherInit: async () => {
-                    const lobby = gameState?.lobbyPlayers || [];
-                    const ps = lobby.map((lp, i) => ({ id: lp.id, name: lp.name, score: 0, bgClass: `p-${(i%4)+1}-bg`, colorClass: `p-${(i%4)+1}-color`, ink: '', collabInk: '', monitorHidden: false, locked: false }));
-                    await updateDoc(doc(db, 'artifacts', SYNC_ID), { status: 'playing', players: ps, curQ: 0, cells: window.generateCells(ps), lastUpdate: Date.now() });
-                },
-
-                confirmStudentName: async () => {
-                    const name = document.getElementById('user-name-input').value.trim(); if(!name || !user) return;
-                    currentPlayerId = user.uid;
-                    await updateDoc(doc(db, 'artifacts', SYNC_ID), { lobbyPlayers: arrayUnion({ id: currentPlayerId, name }) });
-                    document.getElementById('student-entry-form').classList.add('hidden');
-                    document.getElementById('student-wait-hint').classList.remove('hidden');
-                },
-
-                togglePause: async () => { await updateDoc(doc(db, 'artifacts', SYNC_ID), { paused: !gameState.paused }); },
-                toggleStudentLock: async () => { 
-                    const ups = gameState.players.map(p => { if(p.id === collabTargetId) p.locked = !p.locked; return p; }); 
-                    await updateDoc(doc(db, 'artifacts', SYNC_ID), { players: ups }); 
-                },
-
-                generateCells: (ps) => { const cells = []; for(let i=0; i<30; i++) { const a = (Math.PI*2/30)*i; const r = 140+Math.random()*90; cells.push({id:i, x:275+r*Math.cos(a), y:275+r*Math.sin(a), owner: ps[i%ps.length]?.id}); } return cells; },
-                renderMapUI: () => { [document.getElementById('board-svg-mini'), document.getElementById('board-svg-main')].forEach(svg => { if(!svg) return; svg.innerHTML = ''; (gameState?.cells || []).forEach(c => { const cir = document.createElementNS("http://www.w3.org/2000/svg", "circle"); cir.setAttribute("cx", c.x); cir.setAttribute("cy", c.y); cir.setAttribute("r", "12"); const ow = gameState.players.find(p=>p.id===c.owner); cir.setAttribute("fill", ow ? window.getHex(ow.colorClass) : "#cbd5e1"); cir.classList.add('territory-cell'); svg.appendChild(cir); }); }); },
-                getHex: (cls) => ({ 'p-1-color': '#ff4d6d', 'p-2-color': '#3b82f6', 'p-3-color': '#10b981', 'p-4-color': '#f59e0b' }[cls] || '#cbd5e1'),
-                
-                setTool: (t) => { 
-                    currentTool = t; 
-                    document.getElementById('tool-pen').classList.toggle('active-tool', t==='pen');
-                    document.getElementById('tool-eraser').classList.toggle('active-tool', t==='eraser');
-                },
-                
                 initCanvas: () => {
                     const c = document.getElementById('writing-canvas');
                     const ctx = c.getContext('2d');
@@ -531,20 +439,52 @@
                         return [(x - r.left) * (c.width / r.width), (y - r.top) * (c.height / r.height)];
                     };
                     const pushUndo = () => { undoStack.push(c.toDataURL()); if(undoStack.length > 20) undoStack.shift(); };
+                    
                     c.onmousedown = (e) => { if(window.isLocked()) return; dr = true; ctx.beginPath(); const [x,y] = gxy(e); ctx.moveTo(x,y); };
                     c.ontouchstart = (e) => { if(window.isLocked()) return; dr = true; const [x,y] = gxy(e); ctx.beginPath(); ctx.moveTo(x,y); e.preventDefault(); };
+                    
                     window.onmousemove = (e) => { if(!dr) return; const [x,y] = gxy(e); ctx.globalCompositeOperation = currentTool === 'eraser' ? 'destination-out' : 'source-over'; ctx.lineTo(x,y); ctx.stroke(); window.syncInk(); };
                     window.ontouchmove = (e) => { if(!dr) return; const [x,y] = gxy(e); ctx.globalCompositeOperation = currentTool === 'eraser' ? 'destination-out' : 'source-over'; ctx.lineTo(x,y); ctx.stroke(); e.preventDefault(); window.syncInk(); };
+                    
                     window.onmouseup = () => { if(dr) { dr = false; pushUndo(); window.syncInk(true); } };
                     window.ontouchend = () => { if(dr) { dr = false; pushUndo(); window.syncInk(true); } };
+                    
                     if(undoStack.length === 0) pushUndo();
+                },
+
+                renderMonitorWall: () => {
+                    const grid = document.getElementById('monitor-grid');
+                    grid.innerHTML = (gameState.players || []).map(p => `
+                        <div class="bg-white p-4 rounded-[2rem] shadow-md border-4 ${p.locked ? 'border-amber-400' : 'border-transparent'}">
+                            <div class="flex justify-between items-center mb-3">
+                                <div class="flex items-center gap-2"><div class="w-4 h-4 rounded-full ${p.bgClass}"></div><span class="text-sm font-black">${p.name}</span></div>
+                                <button onclick="window.openCollab('${p.id}', '${p.name}')" class="p-2 bg-indigo-600 text-white rounded-lg text-[10px] font-black italic">進入指導</button>
+                            </div>
+                            <div class="aspect-square bg-white rounded-2xl overflow-hidden border border-slate-100 flex items-center justify-center relative">
+                                ${p.monitorHidden ? '<div class="text-slate-200 uppercase text-[10px]">Privacy Mode</div>' : (p.ink ? `<img src="${p.ink}" class="max-w-full max-h-full">` : '<div class="text-[10px] text-slate-200">無筆跡</div>')}
+                            </div>
+                        </div>
+                    `).join('');
+                    lucide.createIcons();
+                },
+
+                // 遠端清除筆跡
+                clearStudentInkRemote: async () => {
+                    if(!confirm("確定要清除該勇者的畫布內容嗎？")) return;
+                    const ups = gameState.players.map(p => { if(p.id === collabTargetId) p.ink = ''; return p; });
+                    await updateDoc(doc(db, 'artifacts', SYNC_ID), { players: ups });
+                    document.getElementById('collab-student-ink').src = '';
+                },
+
+                // 指定換題
+                syncQuestionToAll: async () => {
+                    await updateDoc(doc(db, 'artifacts', SYNC_ID), { curQ: teacherPreviewIdx, lastUpdate: Date.now() });
                 },
 
                 isLocked: () => {
                     const me = (gameState.players || []).find(p => p.id === currentPlayerId);
                     return me?.locked || gameState?.paused;
                 },
-
                 syncInk: async (force = false) => {
                     const now = Date.now();
                     if(!force && now - lastSyncTime < 800) return;
@@ -554,33 +494,26 @@
                     const ups = gameState.players.map(p => { if(p.id === currentPlayerId) p.ink = data; return p; });
                     await updateDoc(doc(db, 'artifacts', SYNC_ID), { players: ups });
                 },
-
-                startTurn: () => {
-                    const q = gameState.questions[gameState.curQ || 0]; if(!q) return;
-                    document.getElementById('q-content-text').innerText = q.content;
-                    document.getElementById('q-index-label').innerText = `#${(gameState.curQ+1).toString().padStart(2,'0')}`;
-                    document.getElementById('handwriting-area').classList.remove('hidden');
-                    window.clearCanvas();
-                    window.initCanvas();
+                navigateQuestion: (dir) => {
+                    const total = gameState.questions.length;
+                    teacherPreviewIdx = (teacherPreviewIdx + dir + total) % total;
+                    const q = gameState.questions[teacherPreviewIdx];
+                    document.getElementById('teacher-hud-q').innerText = `[預覽] ${q.content}`;
                 },
-
-                initCollabCanvas: () => { 
-                    const c = document.getElementById('collab-canvas'), ctx = c.getContext('2d'); 
-                    ctx.lineWidth = 10; ctx.lineCap = 'round'; ctx.clearRect(0,0,700,700); 
-                    let dr = false; 
-                    c.onmousedown = (e) => { dr = true; const r = c.getBoundingClientRect(); ctx.beginPath(); ctx.moveTo(e.clientX - r.left, e.clientY - r.top); }; 
-                    window.onmousemove = (e) => { if(!dr) return; const r = c.getBoundingClientRect(); ctx.globalCompositeOperation = collabPenColor === 'eraser' ? 'destination-out' : 'source-over'; ctx.strokeStyle = collabPenColor; ctx.lineTo(e.clientX - r.left, e.clientY - r.top); ctx.stroke(); }; 
-                    window.onmouseup = () => { if(dr) { dr = false; collabUndoStack.push(c.toDataURL()); window.syncCollabInk(); } }; 
-                    if(collabUndoStack.length === 0) collabUndoStack.push(c.toDataURL());
+                renderQuestionList: () => {
+                    if(!gameState || !gameState.questions) return;
+                    const container = document.getElementById('question-list');
+                    container.innerHTML = gameState.questions.map((q, i) => `
+                        <div class="bg-white p-4 rounded-2xl border flex items-center gap-4 mb-2 shadow-sm font-black">
+                            <span class="bg-slate-900 text-white px-3 py-1 rounded text-[10px] uppercase">${q.type}</span>
+                            <span class="flex-1 text-sm italic">${q.content}</span>
+                        </div>
+                    `).join('');
                 },
-                syncCollabInk: async () => { 
-                    const data = document.getElementById('collab-canvas').toDataURL('image/webp', 0.2); 
-                    const ups = gameState.players.map(p => { if(p.id === collabTargetId) p.collabInk = data; return p; }); 
-                    await updateDoc(doc(db, 'artifacts', SYNC_ID), { players: ups }); 
-                },
-                drawRemoteInk: (data) => { 
-                    const c = document.getElementById('remote-ink-canvas'), ctx = c.getContext('2d'), img = new Image(); 
-                    img.onload = () => { ctx.clearRect(0,0,c.width,c.height); ctx.drawImage(img, 0,0,c.width,c.height); }; img.src = data; 
+                setTool: (t) => { 
+                    currentTool = t; 
+                    document.getElementById('tool-pen').classList.toggle('active-tool', t==='pen');
+                    document.getElementById('tool-eraser').classList.toggle('active-tool', t==='eraser');
                 },
                 clearCanvas: () => { document.getElementById('writing-canvas').getContext('2d').clearRect(0,0,2000,2000); window.syncInk(true); },
                 undoAction: () => {
@@ -592,9 +525,36 @@
                     if(lastImg) { const img = new Image(); img.onload = () => ctx.drawImage(img, 0, 0); img.src = lastImg; }
                     window.syncInk(true);
                 },
+                handleTeacherInit: async () => {
+                    const lobby = gameState?.lobbyPlayers || [];
+                    const ps = lobby.map((lp, i) => ({ id: lp.id, name: lp.name, score: 0, bgClass: `p-${(i%4)+1}-bg`, colorClass: `p-${(i%4)+1}-color`, ink: '', collabInk: '', monitorHidden: false, locked: false }));
+                    await updateDoc(doc(db, 'artifacts', SYNC_ID), { status: 'playing', players: ps, curQ: 0, cells: window.generateCells(ps), lastUpdate: Date.now() });
+                },
+                confirmStudentName: async () => {
+                    const name = document.getElementById('user-name-input').value.trim(); if(!name || !user) return;
+                    currentPlayerId = user.uid;
+                    await updateDoc(doc(db, 'artifacts', SYNC_ID), { lobbyPlayers: arrayUnion({ id: currentPlayerId, name }) });
+                    document.getElementById('student-entry-form').classList.add('hidden');
+                    document.getElementById('student-wait-hint').classList.remove('hidden');
+                },
+                togglePause: async () => { await updateDoc(doc(db, 'artifacts', SYNC_ID), { paused: !gameState.paused }); },
+                toggleStudentLock: async () => { 
+                    const ups = gameState.players.map(p => { if(p.id === collabTargetId) p.locked = !p.locked; return p; }); 
+                    await updateDoc(doc(db, 'artifacts', SYNC_ID), { players: ups }); 
+                },
+                openCollab: (sid, name) => { collabTargetId = sid; document.getElementById('collab-name').innerText = name; document.getElementById('collab-modal').classList.remove('hidden'); document.getElementById('collab-student-ink').src = gameState.players.find(p=>p.id===sid)?.ink || ''; window.initCollabCanvas(); },
+                closeCollab: async () => { const ups = gameState.players.map(p => { if(p.id === collabTargetId) { p.locked = false; p.collabInk = ''; } return p; }); await updateDoc(doc(db, 'artifacts', SYNC_ID), { players: ups }); document.getElementById('collab-modal').classList.add('hidden'); collabTargetId = null; },
+                setCollabPen: (c) => { collabPenColor = c; document.getElementById('c-pen-red').classList.toggle('active-tool', c==='#ef4444'); document.getElementById('c-pen-blue').classList.toggle('active-tool', c==='#3b82f6'); document.getElementById('c-tool-eraser').classList.toggle('active-tool', c==='eraser'); },
+                initCollabCanvas: () => { const c = document.getElementById('collab-canvas'), ctx = c.getContext('2d'); ctx.lineWidth = 10; ctx.lineCap = 'round'; ctx.clearRect(0,0,700,700); let dr = false; c.onmousedown = (e) => { dr = true; const r = c.getBoundingClientRect(); ctx.beginPath(); ctx.moveTo(e.clientX - r.left, e.clientY - r.top); }; window.onmousemove = (e) => { if(!dr) return; const r = c.getBoundingClientRect(); ctx.globalCompositeOperation = collabPenColor === 'eraser' ? 'destination-out' : 'source-over'; ctx.strokeStyle = collabPenColor; ctx.lineTo(e.clientX - r.left, e.clientY - r.top); ctx.stroke(); }; window.onmouseup = () => { if(dr) { dr = false; collabUndoStack.push(c.toDataURL()); window.syncCollabInk(); } }; },
+                syncCollabInk: async () => { const data = document.getElementById('collab-canvas').toDataURL('image/webp', 0.2); const ups = gameState.players.map(p => { if(p.id === collabTargetId) p.collabInk = data; return p; }); await updateDoc(doc(db, 'artifacts', SYNC_ID), { players: ups }); },
+                drawRemoteInk: (data) => { const c = document.getElementById('remote-ink-canvas'), ctx = c.getContext('2d'), img = new Image(); img.onload = () => { ctx.clearRect(0,0,c.width,c.height); ctx.drawImage(img, 0,0,c.width,c.height); }; img.src = data; },
+                renderMapUI: () => { [document.getElementById('board-svg-mini'), document.getElementById('board-svg-main')].forEach(svg => { if(!svg) return; svg.innerHTML = ''; (gameState?.cells || []).forEach(c => { const cir = document.createElementNS("http://www.w3.org/2000/svg", "circle"); cir.setAttribute("cx", c.x); cir.setAttribute("cy", c.y); cir.setAttribute("r", "12"); const ow = gameState.players.find(p=>p.id===c.owner); cir.setAttribute("fill", ow ? window.getHex(ow.colorClass) : "#cbd5e1"); cir.classList.add('territory-cell'); svg.appendChild(cir); }); }); },
+                generateCells: (ps) => { const cells = []; for(let i=0; i<30; i++) { const a = (Math.PI*2/30)*i; const r = 140+Math.random()*90; cells.push({id:i, x:275+r*Math.cos(a), y:275+r*Math.sin(a), owner: ps[i%ps.length]?.id}); } return cells; },
+                getHex: (cls) => ({ 'p-1-color': '#ff4d6d', 'p-2-color': '#3b82f6', 'p-3-color': '#10b981', 'p-4-color': '#f59e0b' }[cls] || '#cbd5e1'),
+                startTurn: () => { const q = gameState.questions[gameState.curQ || 0]; if(!q) return; document.getElementById('q-content-text').innerText = q.content; document.getElementById('q-index-label').innerText = `#${(gameState.curQ+1).toString().padStart(2,'0')}`; document.getElementById('handwriting-area').classList.remove('hidden'); window.clearCanvas(); window.initCanvas(); },
                 submitHandwriting: () => { canAttack = true; document.getElementById('attack-modal').classList.remove('hidden'); },
                 openFullMap: () => document.getElementById('attack-modal').classList.remove('hidden'),
-                copyJoinLink: () => { const el = document.createElement('textarea'); el.value = window.location.href; document.body.appendChild(el); el.select(); document.execCommand('copy'); document.body.removeChild(el); alert("連結已複製!"); }
+                copyJoinLink: () => { const el = document.createElement('textarea'); el.value = window.location.href; document.body.appendChild(el); el.select(); document.execCommand('copy'); document.body.removeChild(el); alert("邀請連結已複製！"); }
             });
         };
 
