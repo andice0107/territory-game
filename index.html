@@ -23,14 +23,12 @@
         .tian-zi-ge { position: relative; background-color: #fff; box-shadow: inset 0 0 0 6px #1e293b; border-radius: 4px; }
         .writing-guide-cross { position: absolute; inset: 0; pointer-events: none; background-image: linear-gradient(to right, transparent 49.5%, #cbd5e1 50%, transparent 50.5%), linear-gradient(to bottom, transparent 49.5%, #cbd5e1 50%, transparent 50.5%); opacity: 0.8; }
         .full-screen-panel { width: 100vw; height: 100vh; position: fixed; top: 0; left: 0; z-index: 50; }
-        .locked-interaction { pointer-events: none !important; opacity: 0.5; filter: grayscale(1); }
         .custom-scrollbar::-webkit-scrollbar { width: 5px; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
     </style>
 </head>
 <body class="min-h-screen overflow-hidden bg-slate-50 font-black">
 
-    <!-- 啟動畫面 -->
     <div id="entry-screen" class="full-screen-panel bg-slate-900 flex flex-col items-center justify-center p-6 z-[200]">
         <div class="text-center space-y-12 w-full max-w-4xl">
             <h1 class="text-7xl font-black text-white italic">領地爭奪 <span class="text-indigo-500 uppercase">Battle</span></h1>
@@ -47,7 +45,6 @@
         </div>
     </div>
 
-    <!-- 教師候戰廳 -->
     <div id="teacher-setup-screen" class="hidden full-screen-panel bg-white text-slate-900 flex flex-col">
         <header class="p-4 border-b-2 border-slate-200 flex justify-between items-center bg-white z-10">
             <h2 class="text-2xl font-black italic">司令部 <span class="text-indigo-600 uppercase">Lobby</span></h2>
@@ -55,7 +52,6 @@
             <button onclick="location.reload()" class="text-slate-400 hover:text-rose-500"><i data-lucide="x-circle" class="w-8 h-8"></i></button>
         </header>
         <div class="flex-1 flex overflow-hidden">
-            <!-- 側邊欄 -->
             <div class="w-[320px] bg-slate-50 border-r p-6 space-y-6 overflow-y-auto custom-scrollbar">
                 <div class="bg-white p-4 rounded-3xl shadow-lg text-center border">
                     <h3 class="font-black text-xs text-slate-400 mb-2 italic uppercase">加入 QRCode</h3>
@@ -72,7 +68,6 @@
                     </select>
                 </div>
             </div>
-            <!-- 題目區 -->
             <div class="flex-1 p-8 flex flex-col overflow-hidden">
                 <h3 class="text-xl font-black italic mb-6 flex items-center gap-2"><i data-lucide="scroll-text" class="text-indigo-600"></i>任務配置清單</h3>
                 <div id="question-list" class="flex-1 space-y-3 overflow-y-auto pr-4 custom-scrollbar"></div>
@@ -82,19 +77,16 @@
                     <button onclick="window.addQuestionRow('boolean')" class="bg-amber-500 text-white px-6 py-3 rounded-xl font-black text-xs shadow-md">+ 是非</button>
                 </div>
             </div>
-            <!-- 名單區 -->
             <div class="w-[280px] bg-slate-100 border-l p-6 overflow-y-auto custom-scrollbar">
                 <h3 class="font-black text-xs uppercase text-slate-400 mb-4 flex justify-between italic">勇者候命區 <span id="ready-count" class="text-indigo-600">0</span></h3>
                 <div id="teacher-lobby-list" class="space-y-3"></div>
             </div>
         </div>
         <div class="p-6 border-t-2 bg-white">
-            <!-- 開戰按鈕：對應截圖底部的黑色按鈕 -->
             <button onclick="window.handleTeacherInit()" id="start-battle-btn" class="w-full bg-slate-900 text-white font-black py-5 rounded-2xl text-2xl uppercase italic shadow-xl disabled:opacity-20 transition-all">啟動戰鬥</button>
         </div>
     </div>
 
-    <!-- 學生登錄頁 -->
     <div id="player-select-screen" class="hidden full-screen-panel bg-slate-900 flex flex-col items-center justify-center p-6 z-[65]">
         <div class="max-w-md w-full bg-white p-10 rounded-[4rem] shadow-2xl text-center space-y-8 relative border-[12px] border-slate-800">
             <div id="student-entry-form" class="space-y-8">
@@ -102,11 +94,11 @@
                 <input type="text" id="user-name-input" maxlength="10" placeholder="您的戰鬥代號..." class="w-full border-b-4 border-slate-100 p-4 text-center text-3xl font-black outline-none focus:border-indigo-600 text-slate-900">
                 
                 <div class="grid grid-cols-2 gap-4">
-                    <button onclick="window.chooseHand('left')" id="hand-left-btn" type="button" class="p-6 border-4 border-slate-100 rounded-3xl flex flex-col items-center gap-2 hover:border-indigo-500 transition-all group">
+                    <button onclick="window.chooseHand('left')" id="hand-left-btn" type="button" class="p-6 border-4 border-slate-100 rounded-3xl flex flex-col items-center gap-2 transition-all group">
                         <i data-lucide="hand" class="w-12 h-12 -scale-x-100 text-slate-300 group-hover:text-indigo-500"></i>
                         <span class="font-black text-slate-900">左撇子</span>
                     </button>
-                    <button onclick="window.chooseHand('right')" id="hand-right-btn" type="button" class="p-6 border-4 border-indigo-500 bg-indigo-50 rounded-3xl flex flex-col items-center gap-2 hover:border-indigo-500 transition-all">
+                    <button onclick="window.chooseHand('right')" id="hand-right-btn" type="button" class="p-6 border-4 border-indigo-500 bg-indigo-50 rounded-3xl flex flex-col items-center gap-2 transition-all">
                         <i data-lucide="hand" class="w-12 h-12 text-indigo-500"></i>
                         <span class="font-black text-slate-900">右撇子</span>
                     </button>
@@ -125,7 +117,6 @@
         </div>
     </div>
 
-    <!-- 遊戲主畫面 -->
     <div id="game-screen" class="hidden full-screen-panel bg-slate-100 flex overflow-hidden">
         <div id="sidebar-info" class="w-1/4 bg-white border-r-2 border-slate-200 p-6 flex flex-col gap-6 shadow-xl z-20">
             <div id="student-info-panel" class="bg-slate-900 p-5 rounded-[2rem] text-white shadow-md">
@@ -157,7 +148,6 @@
                 <div id="q-content-text" class="font-black text-slate-900 italic uppercase mb-10 flex items-center justify-center text-center text-5xl" style="flex: 0 0 120px;">正在通訊同步...</div>
                 
                 <div class="flex-1 flex items-center justify-center relative">
-                    <!-- 手寫 -->
                     <div id="handwriting-area" class="hidden w-full h-full flex items-center">
                         <div id="handwriting-sub-container" class="w-full h-full flex items-center">
                             <div id="canvas-tools" class="flex flex-col gap-3 w-48">
@@ -190,81 +180,87 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
         
-        const SYNC_ID = 'TW-2026-BATTLE-FINAL-STABLE';
+        const SYNC_ID = 'TW-2026-BATTLE-STABLE-V2';
 
         let role = null, user = null, gameState = null, currentPlayerId = null, handPref = 'right';
         let currentTool = 'pen';
 
-        // --- 全域函式強制掛載 ---
         window.mountGlobals = function() {
             Object.assign(window, {
                 switchRole: async (r) => {
                     role = r;
                     document.getElementById('entry-screen').classList.add('hidden');
+                    
                     if(role === 'teacher') {
                         document.getElementById('teacher-setup-screen').classList.remove('hidden');
                         QRCode.toCanvas(document.getElementById('qr-canvas'), window.location.href, { width: 250, margin: 1 });
                         
-                        // 注入截圖中的預設題目
+                        // 強制重置為 Lobby 狀態，防止自動開戰
+                        await setDoc(doc(db, 'artifacts', SYNC_ID), { 
+                            status: 'lobby', 
+                            lobbyPlayers: [], 
+                            lastUpdate: Date.now() 
+                        });
+
                         window.addQuestionRow('hand', '戰：請寫出挑戰之戰的戰字');
                         window.addQuestionRow('choice', '2026年是哪一個生肖年？', '龍,蛇,馬,羊', '馬');
                         window.addQuestionRow('boolean', '我們正在進行領地爭奪戰嗎？', '', '是');
-                        
-                        // 監聽大廳
-                        onSnapshot(doc(db, 'artifacts', SYNC_ID), (ds) => {
-                            if(ds.exists()) {
-                                gameState = ds.data();
-                                if(gameState.status === 'playing') {
-                                    window.switchToGameUI();
-                                } else {
-                                    const ps = gameState.lobbyPlayers || [];
-                                    document.getElementById('ready-count').innerText = ps.length;
-                                    document.getElementById('join-stats-header').innerText = `已報到: ${ps.length} 人`;
-                                    document.getElementById('teacher-lobby-list').innerHTML = ps.map(p => `
-                                        <div class="bg-white p-3 rounded-xl border flex items-center gap-3 shadow-sm font-black">
-                                            <div class="w-3 h-3 rounded-full bg-indigo-500"></div>
-                                            <span>${p.name}</span>
-                                        </div>
-                                    `).join('');
-                                }
-                            }
-                        });
                     } else {
                         document.getElementById('player-select-screen').classList.remove('hidden');
-                        // 學生端監聽開戰狀態
-                        onSnapshot(doc(db, 'artifacts', SYNC_ID), (ds) => {
-                            if(ds.exists() && ds.data().status === 'playing') {
-                                gameState = ds.data();
+                    }
+
+                    // 統一監聽器
+                    onSnapshot(doc(db, 'artifacts', SYNC_ID), (ds) => {
+                        if(ds.exists()) {
+                            const data = ds.data();
+                            const prevStatus = gameState?.status;
+                            gameState = data;
+                            
+                            if(role === 'teacher') {
+                                const ps = data.lobbyPlayers || [];
+                                document.getElementById('ready-count').innerText = ps.length;
+                                document.getElementById('join-stats-header').innerText = `已報到: ${ps.length} 人`;
+                                document.getElementById('teacher-lobby-list').innerHTML = ps.map(p => `
+                                    <div class="bg-white p-3 rounded-xl border flex items-center gap-3 shadow-sm font-black text-slate-800">
+                                        <div class="w-3 h-3 rounded-full bg-indigo-500"></div>
+                                        <span>${p.name}</span>
+                                    </div>
+                                `).join('');
+                            }
+
+                            // 只有當狀態真正變為 playing 時才跳轉
+                            if(data.status === 'playing' && prevStatus !== 'playing') {
                                 window.switchToGameUI();
                             }
-                        });
-                    }
+                        }
+                    });
                 },
                 chooseHand: (h) => {
                     handPref = h;
                     const gameScreen = document.getElementById('game-screen');
                     const sub = document.getElementById('handwriting-sub-container');
                     const outer = document.getElementById('canvas-container-outer');
+                    const sidebar = document.getElementById('sidebar-info');
                     const leftBtn = document.getElementById('hand-left-btn');
                     const rightBtn = document.getElementById('hand-right-btn');
 
                     if(h === 'left') {
-                        // 左撇子佈局：資訊區在右，田字格在左邊緣
+                        // 左撇子：資訊區在右，田字格在最左
                         gameScreen.style.flexDirection = 'row-reverse';
                         sub.style.flexDirection = 'row-reverse';
-                        outer.classList.remove('ml-auto');
                         outer.style.marginLeft = '0';
                         outer.style.marginRight = 'auto';
+                        outer.classList.remove('ml-auto');
                         
                         leftBtn.classList.add('border-indigo-500', 'bg-indigo-50');
                         rightBtn.classList.remove('border-indigo-500', 'bg-indigo-50');
                     } else {
-                        // 右撇子佈局：資訊區在左，田字格在右邊緣
+                        // 右撇子：資訊區在左，田字格在最右
                         gameScreen.style.flexDirection = 'row';
                         sub.style.flexDirection = 'row';
-                        outer.classList.add('ml-auto');
                         outer.style.marginLeft = 'auto';
                         outer.style.marginRight = '0';
+                        outer.classList.add('ml-auto');
                         
                         rightBtn.classList.add('border-indigo-500', 'bg-indigo-50');
                         leftBtn.classList.remove('border-indigo-500', 'bg-indigo-50');
@@ -274,17 +270,13 @@
                     const name = document.getElementById('user-name-input').value.trim();
                     if(!name || !user) return;
                     currentPlayerId = user.uid;
-                    const ref = doc(db, 'artifacts', SYNC_ID);
-                    try {
-                        const snap = await getDoc(ref);
-                        if(!snap.exists()) {
-                            await setDoc(ref, { lobbyPlayers: [{ id: currentPlayerId, name }], status: 'lobby' });
-                        } else {
-                            await updateDoc(ref, { lobbyPlayers: arrayUnion({ id: currentPlayerId, name }) });
-                        }
-                        document.getElementById('student-entry-form').classList.add('hidden');
-                        document.getElementById('student-wait-hint').classList.remove('hidden');
-                    } catch (e) { console.error(e); }
+                    
+                    await updateDoc(doc(db, 'artifacts', SYNC_ID), { 
+                        lobbyPlayers: arrayUnion({ id: currentPlayerId, name }) 
+                    });
+                    
+                    document.getElementById('student-entry-form').classList.add('hidden');
+                    document.getElementById('student-wait-hint').classList.remove('hidden');
                 },
                 addQuestionRow: (type, content='', options='', answer='') => {
                     const container = document.getElementById('question-list');
@@ -292,51 +284,43 @@
                     div.className = "bg-white p-6 rounded-xl border-2 border-slate-100 flex gap-4 items-center shadow-sm";
                     div.innerHTML = `
                         <span class="bg-slate-900 text-white px-3 py-1 rounded text-[10px] font-black uppercase">${type}</span>
-                        <span class="text-lg font-black flex-1">${content || '新任務'}</span>
-                        <input type="hidden" class="q-data" data-type="${type}" data-content="${content}" data-opts="${options}" data-ans="${answer}">
+                        <input type="text" class="q-content flex-1 bg-transparent border-none outline-none font-black text-lg" value="${content}">
+                        <input type="hidden" class="q-type" value="${type}">
+                        <input type="hidden" class="q-opts" value="${options}">
+                        <input type="hidden" class="q-ans" value="${answer}">
                     `;
                     container.appendChild(div);
                 },
-                // --- 修正過的「開戰」函式 ---
                 handleTeacherInit: async () => {
-                    try {
-                        const lobby = gameState?.lobbyPlayers || [];
-                        if(lobby.length === 0) { alert("目前沒有學生加入！"); return; }
-                        
-                        const btn = document.getElementById('start-battle-btn');
-                        btn.innerText = "正在部署戰場...";
-                        btn.disabled = true;
+                    const lobby = gameState?.lobbyPlayers || [];
+                    if(lobby.length === 0) return alert("還沒有勇者報到！");
+                    
+                    const btn = document.getElementById('start-battle-btn');
+                    btn.disabled = true;
+                    btn.innerText = "戰場生成中...";
 
-                        const qs = [];
-                        document.querySelectorAll('.q-data').forEach(el => {
-                            qs.push({
-                                type: el.dataset.type,
-                                content: el.dataset.content,
-                                options: el.dataset.opts.split(','),
-                                answer: el.dataset.ans
-                            });
+                    const qs = [];
+                    document.querySelectorAll('#question-list > div').forEach(el => {
+                        qs.push({
+                            type: el.querySelector('.q-type').value,
+                            content: el.querySelector('.q-content').value,
+                            options: el.querySelector('.q-opts').value.split(','),
+                            answer: el.querySelector('.q-ans').value
                         });
+                    });
 
-                        const ps = lobby.map((lp, i) => ({
-                            id: lp.id, name: lp.name, score: 0, 
-                            colorClass: `p-${(i%8)+1}-color`, bgClass: `p-${(i%8)+1}-bg`
-                        }));
+                    const ps = lobby.map((lp, i) => ({
+                        id: lp.id, name: lp.name, score: 0, 
+                        bgClass: `p-${(i%8)+1}-bg`, colorClass: `p-${(i%8)+1}-color`
+                    }));
 
-                        // 寫入開戰狀態
-                        await updateDoc(doc(db, 'artifacts', SYNC_ID), {
-                            status: 'playing',
-                            questions: qs,
-                            players: ps,
-                            curQ: 0,
-                            lastUpdate: Date.now()
-                        });
-                        
-                        console.log("戰鬥已成功啟動！");
-                    } catch (err) {
-                        alert("開戰失敗：" + err.message);
-                        document.getElementById('start-battle-btn').disabled = false;
-                        document.getElementById('start-battle-btn').innerText = "啟動戰鬥";
-                    }
+                    await updateDoc(doc(db, 'artifacts', SYNC_ID), {
+                        status: 'playing',
+                        questions: qs,
+                        players: ps,
+                        curQ: 0,
+                        lastUpdate: Date.now()
+                    });
                 },
                 switchToGameUI: () => {
                     document.getElementById('teacher-setup-screen').classList.add('hidden');
@@ -348,8 +332,8 @@
                         document.getElementById('player-identity-tag').innerText = `勇者: ${me?.name || '未知'}`;
                         document.getElementById('my-name-display').innerText = me?.name || '勇者';
                         document.getElementById('my-color-preview').className = `w-14 h-14 rounded-full border-4 border-white/10 ${me?.bgClass}`;
-                        window.renderQuestion();
                     }
+                    window.renderQuestion();
                 },
                 renderQuestion: () => {
                     const q = gameState.questions[gameState.curQ || 0];
@@ -363,34 +347,33 @@
                 initCanvas: () => {
                     const c = document.getElementById('writing-canvas');
                     const ctx = c.getContext('2d');
-                    ctx.lineWidth = 12; ctx.lineCap = 'round'; ctx.strokeStyle = '#1e293b';
+                    ctx.lineWidth = 14; ctx.lineCap = 'round'; ctx.strokeStyle = '#1e293b';
                     let dr = false;
-                    const getXY = (e) => {
+                    const gxy = (e) => {
                         const r = c.getBoundingClientRect();
                         const x = e.touches ? e.touches[0].clientX : e.clientX;
                         const y = e.touches ? e.touches[0].clientY : e.clientY;
                         return [x - r.left, y - r.top];
                     };
-                    c.onmousedown = (e) => { dr = true; const [x,y] = getXY(e); ctx.beginPath(); ctx.moveTo(x,y); };
-                    c.ontouchstart = (e) => { dr = true; const [x,y] = getXY(e); ctx.beginPath(); ctx.moveTo(x,y); e.preventDefault(); };
-                    window.onmousemove = (e) => { if(!dr) return; const [x,y] = getXY(e); ctx.lineTo(x,y); ctx.stroke(); };
-                    window.ontouchmove = (e) => { if(!dr) return; const [x,y] = getXY(e); ctx.lineTo(x,y); ctx.stroke(); e.preventDefault(); };
+                    c.onmousedown = (e) => { dr = true; const [x,y] = gxy(e); ctx.beginPath(); ctx.moveTo(x,y); };
+                    c.ontouchstart = (e) => { dr = true; const [x,y] = gxy(e); ctx.beginPath(); ctx.moveTo(x,y); e.preventDefault(); };
+                    window.onmousemove = (e) => { if(!dr) return; const [x,y] = gxy(e); ctx.lineTo(x,y); ctx.stroke(); };
+                    window.ontouchmove = (e) => { if(!dr) return; const [x,y] = gxy(e); ctx.lineTo(x,y); ctx.stroke(); e.preventDefault(); };
                     window.onmouseup = () => dr = false;
                     window.ontouchend = () => dr = false;
+                },
+                setTool: (t) => {
+                    currentTool = t;
+                    const ctx = document.getElementById('writing-canvas').getContext('2d');
+                    ctx.globalCompositeOperation = t === 'eraser' ? 'destination-out' : 'source-over';
                 },
                 clearCanvas: () => {
                     const c = document.getElementById('writing-canvas');
                     c.getContext('2d').clearRect(0,0,500,500);
                 },
-                setTool: (t) => {
-                    const ctx = document.getElementById('writing-canvas').getContext('2d');
-                    currentTool = t;
-                    ctx.globalCompositeOperation = t === 'eraser' ? 'destination-out' : 'source-over';
-                    document.getElementById('tool-pen').className = t === 'pen' ? 'w-full bg-indigo-600 text-white py-5 rounded-3xl border-4 border-indigo-300 font-black' : 'w-full bg-slate-200 text-slate-500 py-5 rounded-3xl font-black';
-                },
                 copyJoinLink: () => {
                     const el = document.createElement('textarea'); el.value = window.location.href; document.body.appendChild(el); el.select(); document.execCommand('copy'); document.body.removeChild(el);
-                    alert("網址已複製！");
+                    alert("連結已複製！");
                 }
             });
         };
