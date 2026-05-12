@@ -12,7 +12,6 @@
         
         .territory-cell { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer; stroke: #fff; stroke-width: 2px; }
         
-        /* 田字格樣式：確保不被內距影響 */
         .tian-zi-ge { 
             position: relative; 
             background-color: #fff; 
@@ -21,7 +20,9 @@
             transition: width 0.1s, height 0.1s; 
             transform-origin: center center;
             flex-shrink: 0;
+            z-index: 10;
         }
+
         .writing-guide-cross { 
             position: absolute; 
             inset: 0; 
@@ -37,8 +38,11 @@
         .custom-scrollbar::-webkit-scrollbar { width: 5px; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
         
-        /* 監控牆卡片效果 */
-        .monitor-card-locked { border-color: #f59e0b !important; box-shadow: 0 0 15px rgba(245, 158, 11, 0.3); }
+        /* 物理性貼邊修正 */
+        .edge-right { position: fixed !important; right: 0 !important; top: 50% !important; transform: translateY(-50%) !important; margin-right: 0 !important; }
+        .edge-left { position: fixed !important; left: 0 !important; top: 50% !important; transform: translateY(-50%) !important; margin-left: 0 !important; }
+        
+        .monitor-card-locked { border: 6px solid #f59e0b !important; box-shadow: 0 0 30px rgba(245, 158, 11, 0.4); }
     </style>
 </head>
 <body class="min-h-screen overflow-hidden bg-slate-50 font-black">
@@ -120,8 +124,7 @@
             <h2 class="text-6xl font-black italic uppercase">作戰暫停</h2>
         </div>
 
-        <!-- Sidebar Info Section -->
-        <div id="sidebar-info" class="w-1/4 bg-white border-r-2 border-slate-200 p-6 flex flex-col gap-6 shadow-xl z-20 overflow-y-auto custom-scrollbar">
+        <div id="sidebar-info" class="w-[380px] bg-white border-r-2 border-slate-200 p-6 flex flex-col gap-6 shadow-xl z-20 overflow-y-auto custom-scrollbar transition-all">
             <div id="student-info-panel" class="bg-slate-900 p-5 rounded-[2rem] text-white shadow-md">
                 <div class="flex items-center gap-4">
                     <div id="my-color-preview" class="w-14 h-14 rounded-full border-4 border-white/10 shadow-inner"></div>
@@ -167,8 +170,7 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="monitor-grid"></div>
             </div>
 
-            <!-- 作答區：確保 PADDING 為 0 -->
-            <div id="student-answer-area" class="h-full flex flex-col transition-all overflow-hidden p-0 m-0">
+            <div id="student-answer-area" class="h-full flex flex-col transition-all overflow-hidden p-0 m-0 relative">
                 <div class="px-10 pt-6 flex justify-between items-start">
                     <div class="flex flex-col gap-2">
                         <span id="q-type-label" class="bg-slate-900 text-white text-[10px] font-black px-6 py-1.5 rounded-full uppercase italic shadow-lg w-max">MISSION INTEL</span>
@@ -179,32 +181,24 @@
                 
                 <div id="q-content-text" class="font-black text-slate-900 italic uppercase mb-4 flex items-center justify-center text-center text-5xl px-10 min-h-[100px]">正在通訊同步...</div>
                 
-                <div class="flex-1 flex items-center relative p-0 m-0 overflow-hidden w-full" id="interaction-root">
-                    <div id="handwriting-area" class="hidden w-full h-full flex items-center p-0 m-0">
-                        <div id="handwriting-sub-container" class="w-full h-full flex items-center p-0 m-0 overflow-hidden">
-                            
-                            <div id="canvas-tools" class="flex flex-col gap-2 w-44 px-4 transition-all flex-shrink-0">
-                                <button onclick="window.setTool('pen')" id="tool-pen" class="w-full bg-indigo-600 text-white py-5 rounded-3xl border-4 border-indigo-300 font-black shadow-lg flex flex-col items-center active-tool"><i data-lucide="pen-tool" class="mb-1"></i>黑筆</button>
-                                <button onclick="window.setTool('eraser')" id="tool-eraser" class="w-full bg-slate-200 text-slate-500 py-5 rounded-3xl font-black flex flex-col items-center"><i data-lucide="eraser" class="mb-1"></i>橡皮擦</button>
-                                <button onclick="window.undoAction()" id="tool-undo" class="w-full bg-slate-200 text-slate-500 py-5 rounded-3xl font-black italic">返回上步</button>
-                                <button onclick="window.clearCanvas()" id="tool-clear" class="w-full bg-slate-200 text-slate-500 py-5 rounded-3xl font-black italic">清空</button>
-                                <div class="grid grid-cols-2 gap-2 mt-2">
-                                    <button onclick="window.zoomCanvas(0.1)" id="zoom-plus" class="bg-slate-800 text-white py-4 rounded-2xl font-black text-2xl shadow-md">+</button>
-                                    <button onclick="window.zoomCanvas(-0.1)" id="zoom-minus" class="bg-slate-800 text-white py-4 rounded-2xl font-black text-2xl shadow-md">-</button>
-                                </div>
-                                <button onclick="window.submitHandwriting()" class="w-full bg-emerald-600 text-white py-8 rounded-[2.5rem] text-4xl font-black shadow-2xl mt-4 italic uppercase">傳送</button>
-                            </div>
-
-                            <!-- 物理性貼邊容器 -->
-                            <div id="canvas-container-outer" class="relative flex-grow h-full flex items-center p-0 m-0">
-                                <div id="canvas-container" class="tian-zi-ge w-[500px] h-[500px] shadow-2xl relative overflow-hidden bg-white m-0">
-                                    <div class="writing-guide-cross"></div>
-                                    <div id="writing-guide" class="writing-bg-text absolute inset-0 hidden"></div>
-                                    <canvas id="writing-canvas" width="500" height="500" class="absolute top-0 left-0 cursor-crosshair z-10 touch-none"></canvas>
-                                    <canvas id="remote-ink-canvas" width="500" height="500" class="absolute top-0 left-0 pointer-events-none z-20"></canvas>
-                                </div>
-                            </div>
+                <div id="handwriting-area" class="hidden absolute inset-0 pt-[250px] pointer-events-none flex items-center">
+                    <div id="canvas-tools" class="flex flex-col gap-2 w-44 px-4 pointer-events-auto flex-shrink-0 z-30">
+                        <button onclick="window.setTool('pen')" id="tool-pen" class="w-full bg-indigo-600 text-white py-5 rounded-3xl border-4 border-indigo-300 font-black shadow-lg flex flex-col items-center active-tool"><i data-lucide="pen-tool" class="mb-1"></i>黑筆</button>
+                        <button onclick="window.setTool('eraser')" id="tool-eraser" class="w-full bg-slate-200 text-slate-500 py-5 rounded-3xl font-black flex flex-col items-center"><i data-lucide="eraser" class="mb-1"></i>橡皮擦</button>
+                        <button onclick="window.undoAction()" id="tool-undo" class="w-full bg-slate-200 text-slate-500 py-5 rounded-3xl font-black italic">返回上步</button>
+                        <button onclick="window.clearCanvas()" id="tool-clear" class="w-full bg-slate-200 text-slate-500 py-5 rounded-3xl font-black italic">清空</button>
+                        <div class="grid grid-cols-2 gap-2 mt-2">
+                            <button onclick="window.zoomCanvas(0.1)" id="zoom-plus" class="bg-slate-800 text-white py-4 rounded-2xl font-black text-2xl shadow-md">+</button>
+                            <button onclick="window.zoomCanvas(-0.1)" id="zoom-minus" class="bg-slate-800 text-white py-4 rounded-2xl font-black text-2xl shadow-md">-</button>
                         </div>
+                        <button onclick="window.submitHandwriting()" class="w-full bg-emerald-600 text-white py-8 rounded-[2.5rem] text-4xl font-black shadow-2xl mt-4 italic uppercase">傳送</button>
+                    </div>
+
+                    <div id="canvas-container" class="tian-zi-ge w-[500px] h-[500px] shadow-2xl relative overflow-hidden bg-white pointer-events-auto">
+                        <div class="writing-guide-cross"></div>
+                        <div id="writing-guide" class="writing-bg-text absolute inset-0 hidden"></div>
+                        <canvas id="writing-canvas" width="500" height="500" class="absolute top-0 left-0 cursor-crosshair z-10 touch-none"></canvas>
+                        <canvas id="remote-ink-canvas" width="500" height="500" class="absolute top-0 left-0 pointer-events-none z-20"></canvas>
                     </div>
                 </div>
             </div>
@@ -259,7 +253,7 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
-        const SYNC_ID = 'TW-2026-FINAL-PRO-SYNC-V10';
+        const SYNC_ID = 'TW-2026-FINAL-PHYSICAL-EDGE-V1';
 
         let role = null, user = null, gameState = null, currentPlayerId = null, handPref = 'right';
         let currentTool = 'pen', collabPenColor = '#ef4444', collabTargetId = null;
@@ -358,29 +352,23 @@
 
                 chooseHand: (h) => {
                     handPref = h;
-                    const subContainer = document.getElementById('handwriting-sub-container');
-                    const outer = document.getElementById('canvas-container-outer');
                     const gameScreen = document.getElementById('game-screen');
+                    const sidebar = document.getElementById('sidebar-info');
                     const canvasBox = document.getElementById('canvas-container');
-                    
-                    // 完全移除內距
-                    document.getElementById('main-canvas-area').className = "flex-1 flex flex-col bg-slate-100 relative p-0 m-0 overflow-hidden";
-                    document.getElementById('student-answer-area').className = "h-full flex flex-col transition-all overflow-hidden p-0 m-0";
+                    const toolBox = document.getElementById('canvas-tools');
                     
                     if(h === 'left') {
-                        // 左撇子：側邊欄右，田字格物理貼死左
+                        // 左撇子：側邊欄置右，田字格絕對貼死左邊緣
                         gameScreen.style.flexDirection = 'row-reverse';
-                        subContainer.style.flexDirection = 'row-reverse';
-                        outer.style.justifyContent = 'flex-start';
-                        canvasBox.style.marginLeft = '0';
-                        canvasBox.style.marginRight = 'auto';
+                        canvasBox.className = 'tian-zi-ge w-[500px] h-[500px] shadow-2xl relative overflow-hidden bg-white edge-left';
+                        toolBox.style.marginLeft = '510px'; 
+                        toolBox.style.marginRight = '0';
                     } else {
-                        // 右撇子：側邊欄左，田字格物理貼死右
+                        // 右撇子：側邊欄置左，田字格絕對貼死右邊緣
                         gameScreen.style.flexDirection = 'row';
-                        subContainer.style.flexDirection = 'row';
-                        outer.style.justifyContent = 'flex-end';
-                        canvasBox.style.marginRight = '0';
-                        canvasBox.style.marginLeft = 'auto';
+                        canvasBox.className = 'tian-zi-ge w-[500px] h-[500px] shadow-2xl relative overflow-hidden bg-white edge-right';
+                        toolBox.style.marginRight = '510px';
+                        toolBox.style.marginLeft = 'auto';
                     }
                     
                     document.getElementById('hand-left-btn').className = h === 'left' ? 'p-6 border-4 border-indigo-500 bg-indigo-50 rounded-3xl flex flex-col items-center gap-2 transition-all shadow-md' : 'p-6 border-4 border-slate-100 rounded-3xl flex flex-col items-center gap-2 transition-all';
@@ -393,7 +381,6 @@
                     const ctx = c.getContext('2d');
                     const tctx = tc.getContext('2d');
                     
-                    // 1. 快照目前筆跡
                     const oldSize = 500 * canvasScale;
                     const tempCanvas = document.createElement('canvas');
                     tempCanvas.width = oldSize; tempCanvas.height = oldSize;
@@ -403,7 +390,6 @@
                     tempRemote.width = oldSize; tempRemote.height = oldSize;
                     tempRemote.getContext('2d').drawImage(tc, 0, 0);
 
-                    // 2. 計算新尺寸
                     canvasScale = Math.max(0.6, Math.min(1.6, canvasScale + delta));
                     const newSize = 500 * canvasScale;
                     
@@ -413,11 +399,14 @@
                     c.width = newSize; c.height = newSize; 
                     tc.width = newSize; tc.height = newSize;
                     
-                    // 3. 按比例繪回 (筆跡跟著格子同步縮放)
                     ctx.drawImage(tempCanvas, 0, 0, oldSize, oldSize, 0, 0, newSize, newSize);
                     tctx.drawImage(tempRemote, 0, 0, oldSize, oldSize, 0, 0, newSize, newSize);
                     
                     window.initCanvas(true); 
+                    
+                    const tbox = document.getElementById('canvas-tools');
+                    if(handPref === 'right') tbox.style.marginRight = `${newSize + 10}px`;
+                    else tbox.style.marginLeft = `${newSize + 10}px`;
                 },
 
                 initCanvas: (isZoom = false) => {
@@ -478,7 +467,7 @@
 
                 syncInk: async (force = false) => {
                     const now = Date.now();
-                    if(!force && now - lastSyncTime < 800) return;
+                    if(!force && now - lastSyncTime < 500) return;
                     lastSyncTime = now;
                     const c = document.getElementById('writing-canvas');
                     const data = c.toDataURL('image/webp', 0.2);
